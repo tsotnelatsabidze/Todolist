@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Migrations;
 using TodoListApp.Services;
 using TodoListApp.Services.Database;
 
@@ -10,7 +9,7 @@ builder.Services.AddScoped<ITodoListService, TodoListDatabaseService>();
 builder.Services.AddControllers();
 builder.Services.AddDbContext<TodoListDbContext>(opionts =>
 {
-    opionts.UseSqlServer(builder.Configuration["ConnectionStrings:TodoListConnection"]);
+    _ = opionts.UseSqlServer(builder.Configuration["ConnectionStrings:TodoListConnection"]);
 });
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
