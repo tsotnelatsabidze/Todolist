@@ -2,14 +2,14 @@ namespace TodoListApp.Services
 {
     public interface ITodoListService
     {
-        Task<IEnumerable<TodoList>> GetTodoListsAsync();
+        Task<List<TodoList>> GetAll();
 
-        Task<TodoList> GetTodoListByTitleAsync(string title);
+        Task<TodoList> Get(int id);
 
-        Task<TodoList> AddTodoList(TodoList todoList);
+        Task<TodoList> Add(TodoList todo);
 
-        Task UpdateTodoListAsync(TodoList todoList);
+        Task Update(int id, TodoList todo);
 
-        Task DeleteTodoListAsync(string title);
+        Task Delete(int id);
     }
 }

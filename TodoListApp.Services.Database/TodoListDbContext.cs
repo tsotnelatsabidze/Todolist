@@ -5,11 +5,11 @@ namespace TodoListApp.Services.Database
 {
     public class TodoListDbContext : DbContext
     {
-        public DbSet<TodoListEntity> TodoLists { get; set; }
-
         public TodoListDbContext(DbContextOptions<TodoListDbContext> options)
             : base(options)
         {
         }
+
+        public DbSet<TodoListEntity> TodoLists => this.Set<TodoListEntity>();
     }
 }

@@ -1,52 +1,61 @@
 using Microsoft.EntityFrameworkCore;
+using TodoListApp.Services;
+using TodoListApp.Services.Database;
 
-namespace TodoListApp.Services.Database
+public class TodoListDatabaseService : ITodoListService
 {
-    public class TodoListDatabaseService : ITodoListService
+    private readonly TodoListDbContext context;
+
+    public TodoListDatabaseService(TodoListDbContext context)
     {
-        private readonly TodoListDbContext context;
+        this.context = context;
+    }
 
-        public TodoListDatabaseService(TodoListDbContext context)
+    public async Task<List<TodoList>> GetAll()
+    {
+        var todoListEntities = await context.TodoLists.ToListAsync();
+        var todoLists = todoListEntities.Select(t => new TodoList
         {
-            this.context = context;
-        }
-        public async Task<TodoList> AddTodoList(TodoList todoList)
-        {
-            _ = this.context.TodoLists.Add((Entities.TodoListEntity)todoList);
-            _ = await this.context.SaveChangesAsync();
-            return todoList;
-        }
-        public async Task<IEnumerable<TodoList>> GetTodoListsAsync()
-        {
-            return await this.context.TodoLists.ToListAsync();
-        }
+            Id = t.Id,
+            Title = t.Title,
+            Description = t.Description,
+            NumberOfTasks = t.NumberOfTasks,
+            IsShared = t.IsShared,
+            IsComplete = t.IsComplete,
+        }).ToList();
+        return todoLists;
+    }
 
-        public async Task<TodoList> GetTodoListByTitleAsync(string title)
-        {
-            return await this.context.TodoLists.FindAsync(title);
-        }
+    public async Task<TodoList> Get(int id)
+    {
+        return await context.TodoLists.FindAsync(id);
+    }
 
-        public async Task<TodoList> AddTodoListAsync(TodoList todoList)
-        {
-            _ = this.context.TodoLists.Add((Entities.TodoListEntity)todoList);
-            _ = await this.context.SaveChangesAsync();
-            return todoList;
-        }
+    public async Task<TodoList> Add(TodoList todoList)
+    {
+        context.TodoLists.Add((TodoListApp.Services.Database.Entities.TodoListEntity)todoList);
+        await context.SaveChangesAsync();
+        return todoList;
+    }
 
-        public async Task UpdateTodoListAsync(TodoList todoList)
+    public async Task Update(int id, TodoList inputTodo)
+    {
+        var todo = await context.TodoLists.FindAsync(id);
+        if (todo != null)
         {
-            this.context.Entry(todoList).State = EntityState.Modified;
-            _ = await this.context.SaveChangesAsync();
+            todo.Title = inputTodo.Title;
+            todo.IsComplete = inputTodo.IsComplete;
+            await context.SaveChangesAsync();
         }
+    }
 
-        public async Task DeleteTodoListAsync(string title)
+    public async Task Delete(int id)
+    {
+        var todo = await context.TodoLists.FindAsync(id);
+        if (todo != null)
         {
-            var todoList = await this.context.TodoLists.FindAsync(title);
-            if (todoList != null)
-            {
-                _ = this.context.TodoLists.Remove(todoList);
-                _ = await this.context.SaveChangesAsync();
-            }
+            context.TodoLists.Remove(todo);
+            await context.SaveChangesAsync();
         }
     }
 }

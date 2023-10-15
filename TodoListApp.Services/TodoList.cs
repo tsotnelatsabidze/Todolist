@@ -11,4 +11,8 @@ public class TodoList
     public int NumberOfTasks { get; set; }
 
     public bool IsShared { get; set; }
+
+    public bool IsComplete { get; set; }
+
+    public int Id { get; set; }
 }

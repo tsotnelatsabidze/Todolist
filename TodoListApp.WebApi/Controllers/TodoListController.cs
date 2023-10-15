@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using TodoListApp.Services;
+using TodoListApp.Services.Database.Entities;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -15,76 +16,40 @@ public class TodoListController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetTodoLists()
     {
-        try
-        {
-            var todoLists = await _todoListService.GetTodoListsAsync();
-            return Ok(todoLists);
-        }
-        catch (Exception)
-        {
-            return StatusCode(500, "An error occurred while retrieving the to-do lists.");
-        }
+        var todoLists = await _todoListService.GetAll();
+        return Ok(todoLists);
     }
 
-    [HttpGet("{title}")]
-    public async Task<IActionResult> GetTodoListByTitle(string title)
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetTodoList(int id)
     {
-        try
+        var todoList = await _todoListService.Get(id);
+        if (todoList == null)
         {
-            var todoList = await _todoListService.GetTodoListByTitleAsync(title);
-            if (todoList == null)
-            {
-                return NotFound($"A to-do list with the title '{title}' was not found.");
-            }
+            return NotFound($"A to-do list with the id '{id}' was not found.");
+        }
 
-            return Ok(todoList);
-        }
-        catch (Exception)
-        {
-            return StatusCode(500, "An error occurred while retrieving the to-do list.");
-        }
+        return Ok(todoList);
     }
 
     [HttpPost]
-    public async Task<IActionResult> AddTodoList(TodoList todoList)
+    public async Task<IActionResult> AddTodoList(TodoListEntity todoList)
     {
-        try
-        {
-            var addedTodoList = await _todoListService.AddTodoList(todoList);
-            return CreatedAtAction(nameof(GetTodoListByTitle), new { title = addedTodoList.Title }, addedTodoList);
-        }
-        catch (Exception)
-        {
-            return StatusCode(500, "An error occurred while adding the to-do list.");
-        }
+        var addedTodoList = await _todoListService.Add(todoList);
+        return CreatedAtAction(nameof(GetTodoList), new { id = addedTodoList.Id }, addedTodoList);
     }
 
-    [HttpPut]
-    public async Task<IActionResult> UpdateTodoList(TodoList todoList)
+    [HttpPut("{id}")]
+    public async Task<IActionResult> UpdateTodoList(int id, TodoListEntity todoList)
     {
-        try
-        {
-            await _todoListService.UpdateTodoListAsync(todoList);
-            return NoContent();
-        }
-        catch (Exception)
-        {
-            return StatusCode(500, "An error occurred while updating the to-do list.");
-        }
+        await _todoListService.Update(id, todoList);
+        return NoContent();
     }
 
-    [HttpDelete("{title}")]
-    public async Task<IActionResult> DeleteTodoList(string title)
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteTodoList(int id)
     {
-        try
-        {
-            await _todoListService.DeleteTodoListAsync(title);
-            return NoContent();
-        }
-        catch (Exception)
-        {
-            return StatusCode(500, "An error occurred while deleting the to-do list.");
-        }
+        await _todoListService.Delete(id);
+        return NoContent();
     }
-
 }
