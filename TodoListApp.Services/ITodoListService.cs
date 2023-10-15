@@ -6,7 +6,7 @@ namespace TodoListApp.Services
 
         Task<TodoList> GetTodoListByTitleAsync(string title);
 
-        Task<TodoList> AddTodoListAsync(TodoList todoList);
+        Task<TodoList> AddTodoList(TodoList todoList);
 
         Task UpdateTodoListAsync(TodoList todoList);
 

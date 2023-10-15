@@ -10,7 +10,12 @@ namespace TodoListApp.Services.Database
         {
             this.context = context;
         }
-
+        public async Task<TodoList> AddTodoList(TodoList todoList)
+        {
+            _ = this.context.TodoLists.Add((Entities.TodoListEntity)todoList);
+            _ = await this.context.SaveChangesAsync();
+            return todoList;
+        }
         public async Task<IEnumerable<TodoList>> GetTodoListsAsync()
         {
             return await this.context.TodoLists.ToListAsync();
