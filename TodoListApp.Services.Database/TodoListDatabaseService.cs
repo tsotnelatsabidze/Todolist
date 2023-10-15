@@ -34,7 +34,7 @@ public class TodoListDatabaseService : ITodoListService
     public async Task<TodoList> Add(TodoList todoList)
     {
         context.TodoLists.Add((TodoListApp.Services.Database.Entities.TodoListEntity)todoList);
-        await context.SaveChangesAsync();
+        _ = await this.context.SaveChangesAsync();
         return todoList;
     }
 
