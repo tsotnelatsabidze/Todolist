@@ -11,5 +11,7 @@ namespace TodoListApp.Services
         Task Update(int id, TodoList todo);
 
         Task Delete(int id);
+
+        IEnumerable<TodoList> GetTodoLists();
     }
 }

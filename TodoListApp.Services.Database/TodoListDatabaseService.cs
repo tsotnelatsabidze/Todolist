@@ -58,4 +58,9 @@ public class TodoListDatabaseService : ITodoListService
             await context.SaveChangesAsync();
         }
     }
+
+    public IEnumerable<TodoList> GetTodoLists()
+    {
+        throw new NotImplementedException();
+    }
 }
