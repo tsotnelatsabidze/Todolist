@@ -16,4 +16,5 @@ public class TodoList
 
     public bool IsComplete { get; set; }
 
+    public ICollection<TodoTaskTodoList>? TodoTaskTodoLists { get; set; }
 }

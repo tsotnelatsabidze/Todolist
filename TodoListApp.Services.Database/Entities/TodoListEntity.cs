@@ -7,8 +7,8 @@ namespace TodoListApp.Services.Database.Entities
     public class TodoListEntity : TodoList
     {
         [Key]
-        public int Id { get; set; }
+        public new int Id { get; set; }
 
-        public string Title { get; set; }
+        public new string? Title { get; set; }
     }
 }

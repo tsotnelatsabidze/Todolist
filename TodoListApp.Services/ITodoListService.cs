@@ -2,16 +2,21 @@ namespace TodoListApp.Services
 {
     public interface ITodoListService
     {
-        Task<List<TodoList>> GetAll();
+        ICollection<TodoList> GetTodoLists();
 
-        Task<TodoList> Get(int id);
+        TodoList GetTodoList(int id);
 
-        Task<TodoList> Add(TodoList todo);
+        ICollection<TodoTask> GetTodoTasksByTodoList(int todoListId);
 
-        Task Update(int id, TodoList todo);
+        bool TodoListExists(int id);
 
-        Task Delete(int id);
+        bool CreateTodoList(TodoList todoList);
 
-        IEnumerable<TodoList> GetTodoLists();
+        bool UpdateTodoList(TodoList todoList);
+
+        bool DeleteTodoList(TodoList todoList);
+
+        bool Save();
+
     }
 }

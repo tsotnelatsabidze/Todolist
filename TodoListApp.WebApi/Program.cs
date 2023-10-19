@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 using TodoListApp.Services;
 using TodoListApp.Services.Database;
@@ -5,16 +6,20 @@ using TodoListApp.Services.Database;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddScoped<ITodoListService, TodoListDatabaseService>();
 builder.Services.AddControllers();
-builder.Services.AddDbContext<TodoListDbContext>(opionts =>
-{
-    _ = opionts.UseSqlServer(builder.Configuration["ConnectionStrings:TodoListConnection"]);
-});
+builder.Services.AddControllers().AddJsonOptions(x =>
+                x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+builder.Services.AddScoped<ITodoTaskService, TodoTaskDatabaseService>();
+builder.Services.AddScoped<ITodoListService, TodoListDatabaseService>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddDbContext<DataContext>(options =>
+{
+    _ = options.UseSqlServer(builder.Configuration.GetConnectionString("TodoListConnection"));
+});
 
 var app = builder.Build();
 
@@ -24,6 +29,8 @@ if (app.Environment.IsDevelopment())
     _ = app.UseSwagger();
     _ = app.UseSwaggerUI();
 }
+
+app.UseHttpsRedirection();
 
 app.UseAuthorization();
 

@@ -1,66 +1,63 @@
-using Microsoft.EntityFrameworkCore;
-using TodoListApp.Services;
-using TodoListApp.Services.Database;
-
-public class TodoListDatabaseService : ITodoListService
+namespace TodoListApp.Services.Database
 {
-    private readonly TodoListDbContext context;
-
-    public TodoListDatabaseService(TodoListDbContext context)
+    public class TodoListDatabaseService : ITodoListService
     {
-        this.context = context;
-    }
+        private readonly DataContext context;
 
-    public async Task<List<TodoList>> GetAll()
-    {
-        var todoListEntities = await context.TodoLists.ToListAsync();
-        var todoLists = todoListEntities.Select(t => new TodoList
+        public TodoListDatabaseService(DataContext context)
         {
-            Id = t.Id,
-            Title = t.Title,
-            Description = t.Description,
-            NumberOfTasks = t.NumberOfTasks,
-            IsShared = t.IsShared,
-            IsComplete = t.IsComplete,
-        }).ToList();
-        return todoLists;
-    }
-
-    public async Task<TodoList> Get(int id)
-    {
-        return await context.TodoLists.FindAsync(id);
-    }
-
-    public async Task<TodoList> Add(TodoList todoList)
-    {
-        context.TodoLists.Add((TodoListApp.Services.Database.Entities.TodoListEntity)todoList);
-        _ = await this.context.SaveChangesAsync();
-        return todoList;
-    }
-
-    public async Task Update(int id, TodoList inputTodo)
-    {
-        var todo = await context.TodoLists.FindAsync(id);
-        if (todo != null)
-        {
-            todo.Title = inputTodo.Title;
-            todo.IsComplete = inputTodo.IsComplete;
-            await context.SaveChangesAsync();
+            this.context = context;
         }
-    }
 
-    public async Task Delete(int id)
-    {
-        var todo = await context.TodoLists.FindAsync(id);
-        if (todo != null)
+        public bool TodoListExists(int id)
         {
-            context.TodoLists.Remove(todo);
-            await context.SaveChangesAsync();
+            return this.context.TodoLists.Any(t => t.Id == id);
         }
-    }
 
-    public IEnumerable<TodoList> GetTodoLists()
-    {
-        throw new NotImplementedException();
+        public bool CreateTodoList(TodoList todoList)
+        {
+            _ = this.context.Add(todoList);
+            return this.Save();
+        }
+
+        public bool DeleteTodoList(TodoList todoList)
+        {
+            _ = this.context.Remove(todoList);
+            return this.Save();
+        }
+
+        public ICollection<TodoList> GetTodoLists()
+        {
+            return this.context.TodoLists.Select(t => new TodoList
+            {
+                Id = t.Id,
+            }).ToList();
+        }
+
+        public TodoList GetTodoList(int id)
+        {
+#pragma warning disable CS8603 // Possible null reference return.
+            return this.context.TodoLists.Where(e => e.Id == id).FirstOrDefault();
+#pragma warning restore CS8603 // Possible null reference return.
+        }
+
+        public ICollection<TodoTask> GetTodoTasksByTodoList(int todoListId)
+        {
+#pragma warning disable CS8619 // Nullability of reference types in value doesn't match target type.
+            return this.context.TodoTaskTodoLists.Where(e => e.TodoListId == todoListId).Select(t => t.TodoTask).ToList();
+#pragma warning restore CS8619 // Nullability of reference types in value doesn't match target type.
+        }
+
+        public bool Save()
+        {
+            var saved = this.context.SaveChanges();
+            return saved > 0;
+        }
+
+        public bool UpdateTodoList(TodoList todoList)
+        {
+            _ = this.context.Update(todoList);
+            return this.Save();
+        }
     }
 }
