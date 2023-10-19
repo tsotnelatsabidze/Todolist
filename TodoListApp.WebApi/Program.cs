@@ -2,6 +2,7 @@ using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 using TodoListApp.Services;
 using TodoListApp.Services.Database;
+using TodoListApp.Services.WebApi;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +13,10 @@ builder.Services.AddControllers().AddJsonOptions(x =>
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddScoped<ITodoTaskService, TodoTaskDatabaseService>();
 builder.Services.AddScoped<ITodoListService, TodoListDatabaseService>();
+builder.Services.AddHttpClient<TodoListWebApiService>(client =>
+{
+    client.BaseAddress = new Uri(builder.Configuration["TodoListWebApiService:BaseAddress"]);
+});
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
