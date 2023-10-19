@@ -4,6 +4,8 @@ namespace TodoListApp.Services;
 public class TodoList
 {
     [Key]
+    public int Id { get; set; }
+
     public string? Title { get; set; }
 
     public string? Description { get; set; }
@@ -14,5 +16,4 @@ public class TodoList
 
     public bool IsComplete { get; set; }
 
-    public int Id { get; set; }
 }

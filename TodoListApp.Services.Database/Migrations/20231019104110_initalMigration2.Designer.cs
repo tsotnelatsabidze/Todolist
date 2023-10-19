@@ -11,28 +11,28 @@ using TodoListApp.Services.Database;
 namespace TodoListApp.Services.Database.Migrations
 {
     [DbContext(typeof(TodoListDbContext))]
-    [Migration("20231015154331_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20231019104110_initalMigration2")]
+    partial class initalMigration2
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.23")
+                .HasAnnotation("ProductVersion", "6.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
             modelBuilder.Entity("TodoListApp.Services.Database.Entities.TodoListEntity", b =>
                 {
-                    b.Property<string>("Title")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Id")
-                        .HasColumnType("int");
 
                     b.Property<bool>("IsComplete")
                         .HasColumnType("bit");
@@ -43,9 +43,13 @@ namespace TodoListApp.Services.Database.Migrations
                     b.Property<int>("NumberOfTasks")
                         .HasColumnType("int");
 
-                    b.HasKey("Title");
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.ToTable("TodoLists");
+                    b.HasKey("Id");
+
+                    b.ToTable("todo_list");
                 });
 #pragma warning restore 612, 618
         }
