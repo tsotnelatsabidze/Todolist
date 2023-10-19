@@ -17,6 +17,5 @@ namespace TodoListApp.Services
         bool DeleteTodoList(TodoList todoList);
 
         bool Save();
-
     }
 }
