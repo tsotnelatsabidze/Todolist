@@ -1,15 +1,16 @@
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using TodoListApp.Services.Models;
-
 namespace TodoListApp.Services.Database.Entities
 {
-    [Table("todo_list")]
-    public class TodoListEntity : TodoList
+    public class TodoListEntity
     {
-        [Key]
-        public new int Id { get; set; }
+        public int Id { get; set; }
 
-        public new string? Title { get; set; }
+        public string? Name { get; set; }
+
+        public string? Description { get; set; }
+
+        public int CreatorUserId { get; set; }
+
+
+        public virtual ICollection<TodoTaskEntity> TodoTasks { get; set; }
     }
 }
