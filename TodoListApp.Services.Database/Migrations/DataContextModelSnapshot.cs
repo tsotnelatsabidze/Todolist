@@ -47,7 +47,7 @@ namespace TodoListApp.Services.Database.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("TodoList");
+                    b.ToTable("TodoLists");
                 });
 
             modelBuilder.Entity("TodoListApp.Services.TodoTask", b =>
@@ -67,66 +67,6 @@ namespace TodoListApp.Services.Database.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("TodoTasks");
-                });
-
-            modelBuilder.Entity("TodoListApp.Services.TodoTaskTodoList", b =>
-                {
-                    b.Property<int>("TodoTaskId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TodoListId")
-                        .HasColumnType("int");
-
-                    b.HasKey("TodoTaskId", "TodoListId");
-
-                    b.HasIndex("TodoListId");
-
-                    b.ToTable("TodoTaskTodoLists");
-                });
-
-            modelBuilder.Entity("TodoListApp.Services.Database.Entities.TodoListEntity", b =>
-                {
-                    b.HasBaseType("TodoListApp.Services.TodoList");
-
-                    b.ToTable("todo_list");
-                });
-
-            modelBuilder.Entity("TodoListApp.Services.TodoTaskTodoList", b =>
-                {
-                    b.HasOne("TodoListApp.Services.TodoList", "TodoList")
-                        .WithMany("TodoTaskTodoLists")
-                        .HasForeignKey("TodoListId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("TodoListApp.Services.TodoTask", "TodoTask")
-                        .WithMany("TodoTaskTodoLists")
-                        .HasForeignKey("TodoTaskId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("TodoList");
-
-                    b.Navigation("TodoTask");
-                });
-
-            modelBuilder.Entity("TodoListApp.Services.Database.Entities.TodoListEntity", b =>
-                {
-                    b.HasOne("TodoListApp.Services.TodoList", null)
-                        .WithOne()
-                        .HasForeignKey("TodoListApp.Services.Database.Entities.TodoListEntity", "Id")
-                        .OnDelete(DeleteBehavior.ClientCascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("TodoListApp.Services.TodoList", b =>
-                {
-                    b.Navigation("TodoTaskTodoLists");
-                });
-
-            modelBuilder.Entity("TodoListApp.Services.TodoTask", b =>
-                {
-                    b.Navigation("TodoTaskTodoLists");
                 });
 #pragma warning restore 612, 618
         }

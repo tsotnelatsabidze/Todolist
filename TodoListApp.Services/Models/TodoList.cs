@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace TodoListApp.Services;
+namespace TodoListApp.Services.Models;
 public class TodoList
 {
     [Key]
@@ -16,5 +16,4 @@ public class TodoList
 
     public bool IsComplete { get; set; }
 
-    public ICollection<TodoTaskTodoList>? TodoTaskTodoLists { get; set; }
 }

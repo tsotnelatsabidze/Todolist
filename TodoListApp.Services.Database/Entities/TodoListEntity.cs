@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using TodoListApp.Services.Models;
 
 namespace TodoListApp.Services.Database.Entities
 {

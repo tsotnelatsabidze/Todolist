@@ -1,6 +1,7 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using TodoListApp.Services;
+using TodoListApp.Services.Interfaces;
+using TodoListApp.Services.Models;
 
 namespace TodoListApp.WebApi.Controllers
 {
@@ -8,27 +9,25 @@ namespace TodoListApp.WebApi.Controllers
     [ApiController]
     public class TodoTaskController : Controller
     {
-        private readonly ITodoTaskService todoTaskRepository;
-        private readonly IMapper mapper;
-
+        private readonly ITodoTaskService _todoTaskService;
+        private readonly IMapper _mapper;
         public TodoTaskController(ITodoTaskService todoTaskRepository, IMapper mapper)
         {
-            this.todoTaskRepository = todoTaskRepository;
-            this.mapper = mapper;
+            _todoTaskService = todoTaskRepository;
+            _mapper = mapper;
         }
-
         [HttpGet]
         [ProducesResponseType(200, Type = typeof(IEnumerable<TodoTask>))]
         public IActionResult GetTodoTasks()
         {
-            var todoTasks = this.mapper.Map<List<TodoTask>>(this.todoTaskRepository.GetTodoTasks());
+            var todoTasks = _mapper.Map<List<TodoTask>>(_todoTaskService.GetTodoTasks());
 
-            if (!this.ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                return this.BadRequest(this.ModelState);
+                return BadRequest(ModelState);
             }
 
-            return this.Ok(todoTasks);
+            return Ok(todoTasks);
         }
 
         [HttpGet("{taskId}")]
@@ -36,94 +35,93 @@ namespace TodoListApp.WebApi.Controllers
         [ProducesResponseType(400)]
         public IActionResult GetTodoTask(int taskId)
         {
-            if (!this.todoTaskRepository.TodoTaskExists(taskId))
+            if (!_todoTaskService.TodoTaskExists(taskId))
             {
-                return this.NotFound();
+                return NotFound();
             }
 
-            var todoTask = this.mapper.Map<TodoTask>(this.todoTaskRepository.GetTodoTask(taskId));
+            var todoTask = _mapper.Map<TodoTask>(_todoTaskService.GetTodoTask(taskId));
 
-            if (!this.ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                return this.BadRequest(this.ModelState);
+                return BadRequest(ModelState);
             }
 
-            return this.Ok(todoTask);
+            return Ok(todoTask);
         }
 
         [HttpPost]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
-        public IActionResult CreateTodoTask([FromQuery] int todoListId, [FromQuery] int todoTaskId, [FromBody] TodoTask todoTaskCreate)
+        public IActionResult CreateTodoTask([FromBody] TodoTask todoTaskCreate)
         {
             if (todoTaskCreate == null)
             {
-                return this.BadRequest(this.ModelState);
+                return BadRequest(ModelState);
             }
 
-            var todoTasks = this.todoTaskRepository.GetTodoTaskTrimToUpper(todoTaskCreate);
+            var todoTasks = _todoTaskService.GetTodoTaskTrimToUpper(todoTaskCreate);
 
             if (todoTasks != null)
             {
-                this.ModelState.AddModelError(string.Empty, "Task already exists");
-                return this.StatusCode(422, this.ModelState);
+                ModelState.AddModelError("", "Task already exists");
+                return StatusCode(422, ModelState);
             }
 
-            if (!this.ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                return this.BadRequest(this.ModelState);
+                return BadRequest(ModelState);
             }
 
-            var todoTaskMap = this.mapper.Map<TodoTask>(todoTaskCreate);
+            var todoTaskMap = _mapper.Map<TodoTask>(todoTaskCreate);
 
-            if (!this.todoTaskRepository.CreateTodoTask(todoListId, todoTaskId, todoTaskMap))
+
+            if (!_todoTaskService.CreateTodoTask(todoTaskMap))
             {
-                this.ModelState.AddModelError(string.Empty, "Something went wrong while saving");
-                return this.StatusCode(500, this.ModelState);
+                ModelState.AddModelError("", "Something went wrong while saving");
+                return StatusCode(500, ModelState);
             }
 
-            return this.Ok("Successfully created");
+            return Ok("Successfully created");
         }
 
         [HttpPut("{taskId}")]
         [ProducesResponseType(400)]
         [ProducesResponseType(204)]
         [ProducesResponseType(404)]
-        public IActionResult UpdateTodoTask(
-            int taskId,
-            [FromQuery] int ownerId,
-            [FromQuery] int listId,
+        public IActionResult UpdateTodoTask(int taskId,
+            [FromQuery] int ownerId, [FromQuery] int listId,
             [FromBody] TodoTask updatedTodoTask)
         {
             if (updatedTodoTask == null)
             {
-                return this.BadRequest(this.ModelState);
+                return BadRequest(ModelState);
             }
 
             if (taskId != updatedTodoTask.Id)
             {
-                return this.BadRequest(this.ModelState);
+                return BadRequest(ModelState);
             }
 
-            if (!this.todoTaskRepository.TodoTaskExists(taskId))
+            if (!_todoTaskService.TodoTaskExists(taskId))
             {
-                return this.NotFound();
+                return NotFound();
             }
 
-            if (!this.ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                return this.BadRequest();
+                return BadRequest();
             }
 
-            var todoTaskMap = this.mapper.Map<TodoTask>(updatedTodoTask);
+            var todoTaskMap = _mapper.Map<TodoTask>(updatedTodoTask);
 
-            if (!this.todoTaskRepository.UpdateTodoTask(ownerId, listId, todoTaskMap))
+            if (!_todoTaskService.UpdateTodoTask(ownerId, listId, todoTaskMap))
             {
-                this.ModelState.AddModelError(string.Empty, "Something went wrong updating owner");
-                return this.StatusCode(500, this.ModelState);
+                ModelState.AddModelError("", "Something went wrong updating owner");
+                return StatusCode(500, ModelState);
             }
 
-            return this.NoContent();
+            return NoContent();
         }
 
         [HttpDelete("{taskId}")]
@@ -132,24 +130,24 @@ namespace TodoListApp.WebApi.Controllers
         [ProducesResponseType(404)]
         public IActionResult DeleteTodoTask(int taskId)
         {
-            if (!this.todoTaskRepository.TodoTaskExists(taskId))
+            if (!_todoTaskService.TodoTaskExists(taskId))
             {
-                return this.NotFound();
+                return NotFound();
             }
 
-            var todoTaskToDelete = this.todoTaskRepository.GetTodoTask(taskId);
+            var todoTaskToDelete = _todoTaskService.GetTodoTask(taskId);
 
-            if (!this.ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                return this.BadRequest(this.ModelState);
+                return BadRequest(ModelState);
             }
 
-            if (!this.todoTaskRepository.DeleteTodoTask(todoTaskToDelete))
+            if (!_todoTaskService.DeleteTodoTask(todoTaskToDelete))
             {
-                this.ModelState.AddModelError(string.Empty, "Something went wrong deleting owner");
+                ModelState.AddModelError("", "Something went wrong deleting owner");
             }
 
-            return this.NoContent();
+            return NoContent();
         }
     }
 }

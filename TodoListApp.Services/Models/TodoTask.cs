@@ -1,4 +1,4 @@
-namespace TodoListApp.Services;
+namespace TodoListApp.Services.Models;
 
 public class TodoTask
 {
@@ -8,5 +8,4 @@ public class TodoTask
 
     public DateTime CreationDate { get; set; }
 
-    public ICollection<TodoTaskTodoList>? TodoTaskTodoLists { get; set; }
 }

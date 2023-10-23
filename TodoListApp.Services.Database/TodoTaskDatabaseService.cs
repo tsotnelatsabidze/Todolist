@@ -1,78 +1,64 @@
+using TodoListApp.Services.Interfaces;
+using TodoListApp.Services.Models;
+
 namespace TodoListApp.Services.Database
 {
     public class TodoTaskDatabaseService : ITodoTaskService
     {
-        private readonly DataContext context;
+        private readonly DataContext _context;
 
         public TodoTaskDatabaseService(DataContext context)
         {
-            this.context = context;
+            _context = context;
         }
 
-        public bool CreateTodoTask(int ownerId, int todoListId, TodoTask todoTask)
+        public bool CreateTodoTask(TodoTask todoTask)
         {
-            var todoList = this.context.TodoLists.Where(a => a.Id == todoListId).FirstOrDefault();
-
-            var todoTaskTodoList = new TodoTaskTodoList()
-            {
-                TodoList = todoList,
-                TodoTask = todoTask,
-            };
-
-            _ = this.context.Add(todoTaskTodoList);
-
-            _ = this.context.Add(todoTask);
-
-            return this.Save();
+            _context.Add(todoTask);
+            return Save();
         }
 
         public bool DeleteTodoTask(TodoTask todoTask)
         {
-            _ = this.context.Remove(todoTask);
-            return this.Save();
+            _context.Remove(todoTask);
+            return Save();
         }
 
         public TodoTask GetTodoTask(int id)
         {
-#pragma warning disable CS8603 // Possible null reference return.
-            return this.context.TodoTasks.Where(t => t.Id == id).FirstOrDefault();
-#pragma warning restore CS8603 // Possible null reference return.
+            return _context.TodoTasks.Where(t => t.Id == id).FirstOrDefault();
         }
 
         public TodoTask GetTodoTask(string title)
         {
-#pragma warning disable CS8603 // Possible null reference return.
-            return this.context.TodoTasks.Where(t => t.Title == title).FirstOrDefault();
-#pragma warning restore CS8603 // Possible null reference return.
+            return _context.TodoTasks.Where(t => t.Title == title).FirstOrDefault();
         }
+
 
         public ICollection<TodoTask> GetTodoTasks()
         {
-            return this.context.TodoTasks.ToList();
+            return _context.TodoTasks.ToList();
         }
-
         public TodoTask GetTodoTaskTrimToUpper(TodoTask todoTaskCreate)
         {
-#pragma warning disable CS8603,CS8602 // Possible null reference return.
-            return this.GetTodoTasks().FirstOrDefault(c => c.Title.Trim().ToUpper() == todoTaskCreate.Title.TrimEnd().ToUpper());
-#pragma warning restore CS8603,CS8602 // Possible null reference return.
+            return GetTodoTasks().FirstOrDefault(c => c.Title.Trim().ToUpper() == todoTaskCreate.Title.TrimEnd().ToUpper());
         }
 
         public bool TodoTaskExists(int taskId)
         {
-            return this.context.TodoTasks.Any(t => t.Id == taskId);
+            return _context.TodoTasks.Any(t => t.Id == taskId);
         }
 
         public bool Save()
         {
-            var saved = this.context.SaveChanges();
+            var saved = _context.SaveChanges();
             return saved > 0;
         }
 
         public bool UpdateTodoTask(int ownerId, int todoListId, TodoTask todoTask)
         {
-            _ = this.context.Update(todoTask);
-            return this.Save();
+            _context.Update(todoTask);
+            return Save();
         }
     }
 }

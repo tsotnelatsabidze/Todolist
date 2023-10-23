@@ -1,63 +1,55 @@
+using TodoListApp.Services.Interfaces;
+using TodoListApp.Services.Models;
+
 namespace TodoListApp.Services.Database
 {
     public class TodoListDatabaseService : ITodoListService
     {
-        private readonly DataContext context;
+        private DataContext _context;
 
         public TodoListDatabaseService(DataContext context)
         {
-            this.context = context;
+            this._context = context;
         }
 
         public bool TodoListExists(int id)
         {
-            return this.context.TodoLists.Any(t => t.Id == id);
+            return this._context.TodoLists.Any(t => t.Id == id);
         }
 
         public bool CreateTodoList(TodoList todoList)
         {
-            _ = this.context.Add(todoList);
-            return this.Save();
+            this._context.Add(todoList);
+            return Save();
         }
 
         public bool DeleteTodoList(TodoList todoList)
         {
-            _ = this.context.Remove(todoList);
-            return this.Save();
+            _context.Remove(todoList);
+            return Save();
         }
 
         public ICollection<TodoList> GetTodoLists()
         {
-            return this.context.TodoLists.Select(t => new TodoList
-            {
-                Id = t.Id,
-            }).ToList();
+            return _context.TodoLists.ToList();
         }
 
         public TodoList GetTodoList(int id)
         {
-#pragma warning disable CS8603 // Possible null reference return.
-            return this.context.TodoLists.Where(e => e.Id == id).FirstOrDefault();
-#pragma warning restore CS8603 // Possible null reference return.
+            return _context.TodoLists.Where(e => e.Id == id).FirstOrDefault();
         }
 
-        public ICollection<TodoTask> GetTodoTasksByTodoList(int todoListId)
-        {
-#pragma warning disable CS8619 // Nullability of reference types in value doesn't match target type.
-            return this.context.TodoTaskTodoLists.Where(e => e.TodoListId == todoListId).Select(t => t.TodoTask).ToList();
-#pragma warning restore CS8619 // Nullability of reference types in value doesn't match target type.
-        }
 
         public bool Save()
         {
-            var saved = this.context.SaveChanges();
+            var saved = _context.SaveChanges();
             return saved > 0;
         }
 
         public bool UpdateTodoList(TodoList todoList)
         {
-            _ = this.context.Update(todoList);
-            return this.Save();
+            _context.Update(todoList);
+            return Save();
         }
     }
 }
