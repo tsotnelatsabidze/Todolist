@@ -1,19 +1,11 @@
-using System.ComponentModel.DataAnnotations;
-
-namespace TodoListApp.Services.Models;
-public class TodoList
+namespace TodoListApp.Services.Models
 {
-    [Key]
-    public int Id { get; set; }
+    public class TodoList
+    {
+        public int Id { get; set; }
 
-    public string? Title { get; set; }
+        public string? Name { get; set; }
 
-    public string? Description { get; set; }
-
-    public int NumberOfTasks { get; set; }
-
-    public bool IsShared { get; set; }
-
-    public bool IsComplete { get; set; }
-
+        public string? Description { get; set; }
+    }
 }

@@ -1,11 +1,25 @@
-namespace TodoListApp.Services.Models;
+using TodoListApp.Services.Enums;
 
-public class TodoTask
+namespace TodoListApp.Services.Models
 {
-    public int Id { get; set; }
+    public class TodoTask
+    {
+        public int Id { get; set; }
 
-    public string? Title { get; set; }
+        public string? Title { get; set; }
 
-    public DateTime CreationDate { get; set; }
+        public string? Description { get; set; }
 
+        public DateTime CreateDate { get; set; }
+
+        public DateTime DueDate { get; set; }
+
+        public TodoTaskStatus Status { get; set; }
+
+        public int CreatorUserId { get; set; }
+
+        public int AssignedUserId { get; set; }
+
+        public int TodoListId { get; set; }
+    }
 }
