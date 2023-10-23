@@ -4,14 +4,16 @@ namespace TodoListApp.Services.Interfaces
 {
     public interface ITodoTaskService
     {
-        ICollection<TodoTask> GetTodoTasks();
-        TodoTask GetTodoTask(int id);
-        TodoTask GetTodoTask(string title);
-        TodoTask GetTodoTaskTrimToUpper(TodoTask todoTaskCreate);
-        bool TodoTaskExists(int taskId);
-        bool CreateTodoTask(TodoTask todoTask);
-        bool UpdateTodoTask(int ownerId, int todoListId, TodoTask todoTask);
-        bool DeleteTodoTask(TodoTask todoTask);
-        bool Save();
+        TodoTask CreateTodoTask(TodoTask todoTask);
+
+        void DeleteTodoTask(int todoTaskId);
+
+        IQueryable<TodoTask> GetAllTodoTasks();
+
+        TodoTask GetTodoTask(int todoTaskId);
+
+        List<TodoTask> GetTodoTasksByTodoList(int todoListId);
+
+        TodoTask UpdateTodoTask(int id, TodoTask todoTaskEntity);
     }
 }

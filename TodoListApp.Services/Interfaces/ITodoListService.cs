@@ -4,12 +4,14 @@ namespace TodoListApp.Services.Interfaces
 {
     public interface ITodoListService
     {
-        ICollection<TodoList> GetTodoLists();
-        TodoList GetTodoList(int id);
-        bool TodoListExists(int id);
-        bool CreateTodoList(TodoList todoList);
-        bool UpdateTodoList(TodoList todoList);
-        bool DeleteTodoList(TodoList todoList);
-        bool Save();
+        TodoList CreateTodoList(TodoList toDoList);
+
+        void DeleteTodoList(int id);
+
+        List<TodoList> GetTodoLists();
+
+        TodoList GetTodoListById(int todoListId);
+
+        TodoList UpdateTodoList(int id, TodoList todoList);
     }
 }
