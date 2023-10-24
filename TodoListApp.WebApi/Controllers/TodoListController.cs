@@ -1,155 +1,81 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using TodoListApp.Services.Interfaces;
-using TodoListApp.Services.Models;
+using TodoListApp.WebApi.Models.Models;
 
 namespace TodoListApp.WebApi.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
-    public class TodoListController : Controller
+    [Route("[controller]")]
+    public class TodoListController : ControllerBase
     {
-        private readonly ITodoListService _todoListService;
+        public ITodoListService TodoListService { get; set; }
+
         private readonly IMapper _mapper;
 
         public TodoListController(ITodoListService todoListService, IMapper mapper)
         {
-            _todoListService = todoListService;
+            TodoListService = todoListService;
             _mapper = mapper;
         }
 
-        [HttpGet]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<TodoList>))]
-        public IActionResult GetTodoLists()
+        [HttpGet(Name = "GetToDoLists")]
+        public ActionResult<TodoList> GetToDoLists()
         {
-            var todoLists = _mapper.Map<List<TodoList>>(_todoListService.GetTodoLists());
-
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            return Ok(todoLists);
+            var todoList = TodoListService.GetTodoLists();
+            return Ok(todoList);
         }
 
-        [HttpGet("{todoListId}")]
-        [ProducesResponseType(200, Type = typeof(TodoList))]
-        [ProducesResponseType(400)]
-        public IActionResult GetTodoList(int todoListId)
+        [HttpGet("{todoListId}", Name = "GetToDoList")]
+        public ActionResult<TodoList> GetToDoList(int todoListId)
         {
-            if (!_todoListService.TodoListExists(todoListId))
-            {
-                return NotFound();
-            }
-
-            var todoList = _mapper.Map<TodoList>(_todoListService.GetTodoList(todoListId));
-
-            if (!this.ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
+            var todoList = TodoListService.GetTodoListById(todoListId);
             return Ok(todoList);
         }
 
 
-        [HttpPost]
-        [ProducesResponseType(204)]
-        [ProducesResponseType(400)]
-        public IActionResult CreateTodoList([FromBody] TodoList todoListCreate)
+        [HttpPost(Name = "CreateToDoList")]
+        public ActionResult<TodoList> CreateToDoList([FromBody] TodoListCreateDTO todoList)
         {
-            if (todoListCreate == null)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var todoList = _todoListService.GetTodoLists()
-                .Where(t => t.Title.Trim().ToUpper() == todoListCreate.Title.TrimEnd().ToUpper())
-                .FirstOrDefault();
-
-            if (todoList != null)
-            {
-                ModelState.AddModelError("", "Todo List already exists");
-                return StatusCode(422, ModelState);
-            }
-
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var todoListMap = _mapper.Map<TodoList>(todoListCreate);
-
-            if (!_todoListService.CreateTodoList(todoListMap))
-            {
-                ModelState.AddModelError("", "Something went wrong while saving");
-                return StatusCode(500, ModelState);
-            }
-
-            return Ok("Successfully created");
+            var result = TodoListService.CreateTodoList(_mapper.Map<Services.Models.TodoList>(todoList));
+            return Ok(result);
         }
 
-        [HttpPut("{todoTaskId}")]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(204)]
-        [ProducesResponseType(404)]
-        public IActionResult UpdateTodoTask(int todoTaskId, [FromBody] TodoTask updatedTodoTask)
+        [HttpDelete("{id}", Name = "DeleteToDoList")]
+        public ActionResult DeleteToDoList(int id)
         {
-            if (updatedTodoTask == null)
+            try
             {
-                return BadRequest(ModelState);
+                TodoListService.DeleteTodoList(id);
             }
-
-            if (todoTaskId != updatedTodoTask.Id)
-            {
-                return BadRequest(ModelState);
-            }
-
-            if (!_todoListService.TodoListExists(todoTaskId))
+            catch (ArgumentNullException)
             {
                 return NotFound();
             }
-
-            if (!ModelState.IsValid)
+            catch (Exception)
             {
-                return BadRequest();
+                return StatusCode(500);
             }
 
-            var todoListMap = _mapper.Map<TodoList>(updatedTodoTask);
-
-            if (!_todoListService.UpdateTodoList(todoListMap))
-            {
-                ModelState.AddModelError("", "Something went wrong updating Todo List");
-                return StatusCode(500, ModelState);
-            }
-
-            return NoContent();
+            return Ok();
         }
 
-        [HttpDelete("{todoListId}")]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(204)]
-        [ProducesResponseType(404)]
-        public IActionResult DeleteTodoList(int todoListId)
+        [HttpPut("{id}", Name = "UpdateToDoList")]
+        public ActionResult<TodoList> UpdateToDoList(int id, [FromBody] TodoListUpdateDTO todoList)
         {
-            if (!_todoListService.TodoListExists(todoListId))
+            try
+            {
+                var result = TodoListService.UpdateTodoList(id, _mapper.Map<Services.Models.TodoList>(todoList));
+                return Ok(result);
+            }
+            catch (ArgumentNullException)
             {
                 return NotFound();
             }
-
-            var todoListToDelete = _todoListService.GetTodoList(todoListId);
-
-            if (!ModelState.IsValid)
+            catch (Exception)
             {
-                return BadRequest(ModelState);
+                return StatusCode(500);
             }
-
-            if (!_todoListService.DeleteTodoList(todoListToDelete))
-            {
-                ModelState.AddModelError("", "Something went wrong deleting Todo List");
-            }
-
-            return NoContent();
         }
     }
 }

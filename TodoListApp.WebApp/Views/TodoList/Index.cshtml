@@ -1,0 +1,266 @@
+@model Tuple<List<TodoListApp.WebApi.Models.Models.TodoList>, List<TodoListApp.WebApi.Models.Models.TodoTask>>
+
+<h2>Todo Lists</h2>
+
+<div style="float: left; width: 30%;">
+    <ul>
+        @foreach (var todoList in Model.Item1)
+        {
+            <li>
+                <a href="#" class="todo-list-item-link" data-todolistid="@todoList.Id">@todoList.Name</a>
+                <button class="delete-todo-list" data-todolistid="@todoList.Id">Delete</button>
+            </li>
+        }
+    </ul>
+
+
+
+    <div>
+        <h3>Save Todo List</h3>
+        <form id="addTodoListForm">
+            <input type="text" id="todoListId" name="todoListId" hidden="hidden" />
+            <label for="newTodoListName">Name:</label>
+            <input type="text" id="newTodoListName" name="newTodoListName" required />
+
+            <label for="newTodoListDescription">Description:</label>
+            <textarea id="newTodoListDescription" name="newTodoListDescription"></textarea>
+
+            <button type="button" onclick="addOrUpdateTodoList()">Save Todo List</button>
+        </form>
+
+        <h3>Add New Todo Task</h3>
+        <form id="addTodoTaskForm">
+            <label for="newTodoTaskTitle">Task Title:</label>
+            <input type="text" id="newTodoTaskTitle" name="newTodoTaskTitle" required />
+
+            <label for="newTodoTaskDescription">Task Description:</label>
+            <textarea id="newTodoTaskDescription" name="newTodoTaskDescription"></textarea>
+
+            <label for="newTodoTaskDueDate">Due Date:</label>
+            <input type="datetime-local" id="newTodoTaskDueDate" name="newTodoTaskDueDate" required />
+
+            <button type="button" onclick="addTodoTask()">Add Todo Task</button>
+        </form>
+    </div>
+</div>
+
+<div style="float: left; width: 70%;">
+    <h2>Todo Tasks</h2>
+    <ul id="todoTasksList">
+        <!-- The JavaScript code will dynamically populate this list -->
+    </ul>
+</div>
+
+
+<!-- ... (existing code) ... -->
+@section scripts {
+    <script>
+        $(document).ready(function () {
+
+            // Function to handle TodoList item click
+            $(".todo-list-item-link").click(function () {
+                var todoListId = $(this).data("todolistid");
+
+                // Make an AJAX request to get TodoList details
+                $.ajax({
+                    url: "/TodoList/GetTodoListDetails",
+                    type: 'GET',
+                    data: { todoListId: todoListId },
+                    success: function (todoListDetails) {
+                        console.log(todoListDetails.name);
+                        // Populate the addTodoListForm with TodoList details
+                        $("#todoListId").val(todoListDetails.id);
+                        $("#newTodoListName").val(todoListDetails.name);
+                        $("#newTodoListDescription").val(todoListDetails.description);
+
+                        // Make another AJAX request to get TodoTasks for the selected TodoList
+                        $.ajax({
+                            url: "/TodoList/GetTasks",
+                            type: 'GET',
+                            data: { todoListId: todoListId },
+                            success: function (todoTasks) {
+                                // Display TodoTasks for the selected TodoList
+                                displayTodoTasks(todoTasks);
+                            },
+                            error: function (xhr, textStatus, errorThrown) {
+                                handleAjaxError('Error fetching todo tasks.', xhr, textStatus, errorThrown);
+                            }
+                        });
+                    },
+                    error: function (xhr, textStatus, errorThrown) {
+                        handleAjaxError('Error fetching todo list details.', xhr, textStatus, errorThrown);
+                    }
+                });
+            });
+
+            // Function to display TodoTasks and highlight overdue tasks
+            function displayTodoTasks(todoTasks) {
+                var todoTasksList = $("#todoTasksList");
+                todoTasksList.empty();
+
+                if (todoTasks && todoTasks.length > 0) {
+                    var currentDate = new Date();  // Get the current date and time
+
+                    todoTasks.forEach(function (task) {
+                        var taskItem = $("<li>").text(task.title);
+                        taskItem.attr("data-todotaskid", task.id);
+
+                        // Check if the task's due date is in the past
+                        var dueDate = new Date(task.dueDate);  // Convert the task's due date to a Date object
+                        if (dueDate < currentDate) {
+                            taskItem.addClass("overdue");  // Apply a CSS class for highlighting
+                        }
+
+                        // Add a click event listener to open the edit view
+                        taskItem.click(function () {
+                            var taskId = $(this).data("todotaskid");
+                            // Open the edit view for the selected Todo Task
+                            window.location.href = "/TodoTask/Edit/" + taskId;
+                        });
+
+                        todoTasksList.append(taskItem);
+                    });
+                } else {
+                    todoTasksList.append("<p>No todo tasks available.</p>");
+                }
+            }
+
+
+
+
+
+            // Function to handle add or update TodoList
+            window.addOrUpdateTodoList = function () {
+                var todoListId = $("#todoListId").val();
+                var newTodoListName = $("#newTodoListName").val();
+                var newTodoListDescription = $("#newTodoListDescription").val();
+
+                // Validate inputs
+                if (!validateTodoListInput(newTodoListName, newTodoListDescription)) {
+                    return;
+                }
+
+                // Perform add or update operation using AJAX
+                $.ajax({
+                    url: "/TodoList/AddOrUpdateTodoList",
+                    type: 'POST',
+                    data: {
+                        id: todoListId,
+                        name: newTodoListName,
+                        description: newTodoListDescription
+                    },
+                    success: function () {
+                        // Show success message
+                        showNotification('TodoList added or updated successfully!', 'success');
+
+                        // Clear the form fields
+                        $("#newTodoListName, #newTodoListDescription").val('');
+
+                        // Reload the page to update the TodoLists
+                        location.reload();
+                    },
+                    error: function (xhr, textStatus, errorThrown) {
+                        handleAjaxError('Error adding or updating todo list.', xhr, textStatus, errorThrown);
+                    }
+                });
+            };
+
+            // Function to add a new TodoTask
+            window.addTodoTask = function () {
+                var newTodoTaskTitle = $("#newTodoTaskTitle").val();
+                var newTodoTaskDescription = $("#newTodoTaskDescription").val();
+                var newTodoTaskDueDate = $("#newTodoTaskDueDate").val();
+                var selectedTodoListId = $("#todoListId").val();
+
+                // Validate inputs
+                if (!validateTodoTaskInput(newTodoTaskTitle, newTodoTaskDescription, newTodoTaskDueDate, selectedTodoListId)) {
+                    return;
+                }
+
+                $.ajax({
+                    url: "/TodoList/AddTodoTask",
+                    type: 'POST',
+                    data: {
+                        title: newTodoTaskTitle,
+                        description: newTodoTaskDescription,
+                        dueDate: newTodoTaskDueDate,
+                        selectedTodoListId: selectedTodoListId
+                    },
+                    success: function () {
+                        // Show success message
+                        showNotification('TodoTask added successfully!', 'success');
+
+                        // Clear form fields
+                        $("#newTodoTaskTitle, #newTodoTaskDescription, #newTodoTaskDueDate").val('');
+
+                        // Reload the page to update the TodoTasks
+                        location.reload();
+                    },
+                    error: function (xhr, textStatus, errorThrown) {
+                        handleAjaxError('Error adding new todo task.', xhr, textStatus, errorThrown);
+                    }
+                });
+            };
+
+            // Function to delete a TodoList
+            $(".delete-todo-list").click(function () {
+                var todoListId = $(this).data("todolistid");
+
+                // Confirm deletion with the user
+                if (confirm('Are you sure you want to delete this TodoList?')) {
+                    $.ajax({
+                        url: "/TodoList/DeleteTodoList",
+                        type: 'POST',
+                        data: { todoListId: todoListId },
+                        success: function () {
+                            // Show success message
+                            showNotification('TodoList deleted successfully!', 'success');
+
+                            // Reload the page after deletion
+                            location.reload();
+                        },
+                        error: function (xhr, textStatus, errorThrown) {
+                            handleAjaxError('Error deleting todo list.', xhr, textStatus, errorThrown);
+                        }
+                    });
+                }
+            });
+
+            // Function to show notifications
+            function showNotification(message, type) {
+                // You can use a notification library or create a custom notification element
+                // For simplicity, we'll use a simple alert for now
+                alert(message);
+            }
+
+            // Function to validate TodoList input
+            function validateTodoListInput(name, description) {
+                if (!name || !description) {
+                    showNotification('Please fill in all fields for the Todo List.', 'error');
+                    return false;
+                }
+                return true;
+            }
+
+            // Function to validate TodoTask input
+            function validateTodoTaskInput(title, description, dueDate, selectedTodoListId) {
+                if (!title || !description || !dueDate || !selectedTodoListId) {
+                    showNotification('Please fill in all fields for the Todo Task.', 'error');
+                    return false;
+                }
+                return true;
+            }
+
+            // Function to handle AJAX errors
+            function handleAjaxError(message, xhr, textStatus, errorThrown) {
+                console.error(message);
+                console.error('Status: ' + xhr.status);
+                console.error('Status Text: ' + textStatus);
+                console.error('Error Thrown: ' + errorThrown);
+
+                // Show error message
+                showNotification('An error occurred. Please try again.', 'error');
+            }
+        });
+    </script>
+}

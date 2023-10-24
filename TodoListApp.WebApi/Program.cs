@@ -1,31 +1,35 @@
-using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.OData;
 using Microsoft.EntityFrameworkCore;
 using TodoListApp.Services.Database;
 using TodoListApp.Services.Database.Services;
 using TodoListApp.Services.Interfaces;
-using TodoListApp.Services.WebApi;
+using TodoListApp.WebApi.Profiles;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
 builder.Services.AddControllers();
-builder.Services.AddControllers().AddJsonOptions(x =>
-                x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
-builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-builder.Services.AddScoped<ITodoTaskService, TodoTaskDatabaseService>();
-builder.Services.AddScoped<ITodoListService, TodoListDatabaseService>();
-builder.Services.AddHttpClient<TodoListWebApiService>(client =>
-{
-    client.BaseAddress = new Uri(builder.Configuration["TodoListWebApiService:BaseAddress"]);
-});
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddDbContext<TodoListDbContext>(options =>
+
+builder.Services.AddDbContext<TodoListDbContext>(c =>
 {
-    _ = options.UseSqlServer(builder.Configuration.GetConnectionString("TodoListConnection"));
+    var connectionString = builder.Configuration.GetConnectionString("ToDoListConnection");
+    _ = c.UseSqlServer(connectionString, sqlOptions => sqlOptions.EnableRetryOnFailure());
 });
+
+builder.Services.AddScoped<ITodoListService, TodoListDatabaseService>();
+builder.Services.AddScoped<ITodoTaskService, TodoTaskDatabaseService>();
+builder.Services.AddAutoMapper(typeof(TodoListCreateProfile));
+builder.Services.AddAutoMapper(typeof(TodoListUpdateProfile));
+builder.Services.AddAutoMapper(typeof(TodoTaskProfile));
+builder.Services.AddAutoMapper(typeof(TodoTaskUpdateProfile));
+
+builder.Services.AddControllers().AddOData(
+    options => options.Select().Filter().OrderBy().Count().SetMaxTop(null));
 
 var app = builder.Build();
 
@@ -33,7 +37,7 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     _ = app.UseSwagger();
-    _ = app.UseSwaggerUI();
+    app.UseSwaggerUI();
 }
 
 app.UseHttpsRedirection();

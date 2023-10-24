@@ -1,0 +1,88 @@
+@model TodoListApp.WebApi.Models.Models.TodoTask
+
+<h2>Edit Todo Task</h2>
+
+<form>
+    @Html.HiddenFor(model => model.Id) <!-- Hidden field for the task ID -->
+
+    <label for="newTodoTaskTitle">Task Title:</label>
+    <input type="text" id="newTodoTaskTitle" name="newTodoTaskTitle" value="@Model.Title" required />
+
+    <label for="newTodoTaskDescription">Task Description:</label>
+    <textarea id="newTodoTaskDescription" name="newTodoTaskDescription">@Model.Description</textarea>
+
+    <label for="newTodoTaskDueDate">Due Date:</label>
+    <input type="datetime" id="newTodoTaskDueDate" name="newTodoTaskDueDate" value="@Model.DueDate" required />
+
+    <button type="button" id="saveChangesButton">Save Changes</button>
+    <button type="button" id="deleteTodoTask">Delete</button>
+</form>
+
+<a href="/TodoList">Back to Todo List</a>
+
+@section scripts {
+    <script>
+        $(document).ready(function () {
+            // Function to handle the "Save Changes" button click
+            $("#saveChangesButton").click(function () {
+                // Collect the data from the form
+                var taskId = @Model.Id; // Task ID from the model
+                var newTitle = $("#newTodoTaskTitle").val();
+                var newDescription = $("#newTodoTaskDescription").val();
+                var newDueDate = $("#newTodoTaskDueDate").val();
+
+                // Create a data object to send to the server
+                var data = {
+                    id: taskId,
+                    title: newTitle,
+                    description: newDescription,
+                    dueDate: newDueDate
+                };
+
+                // Make an AJAX request to update the TodoTask
+                $.ajax({
+                    url: "/TodoTask/Update",
+                    type: 'POST',
+                    data: data,
+                    success: function (response) {
+                        // Handle the success response (if needed)
+                        // For example, you can display a success message to the user
+                        alert("TodoTask updated successfully!");
+                    },
+                    error: function (xhr, textStatus, errorThrown) {
+                        // Handle the error response (if needed)
+                        // For example, you can display an error message to the user
+                        alert("Error updating TodoTask.");
+                    }
+                });
+            });
+
+            $("#deleteTodoTask").click(function () {
+                if (confirm('Are you sure you want to delete this TodoTask?')) {
+                    // Collect the task ID from the model or another source
+                    var taskId = @Model.Id; // Task ID from the model
+
+                    // Make an AJAX request to delete the TodoTask
+                    $.ajax({
+                        url: "/TodoTask/Delete",
+                        type: 'POST',
+                        data: { taskId: taskId },
+                        success: function (response) {
+                            // Handle the success response (if needed)
+                            // For example, you can display a success message to the user
+                            alert("TodoTask deleted successfully!");
+
+                            // Optionally, you can redirect the user to another page after deletion
+                            window.location.href = "/TodoList"; // Redirect to the Todo List
+                        },
+                        error: function (xhr, textStatus, errorThrown) {
+                            // Handle the error response (if needed)
+                            // For example, you can display an error message to the user
+                            alert("Error deleting TodoTask.");
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+}
