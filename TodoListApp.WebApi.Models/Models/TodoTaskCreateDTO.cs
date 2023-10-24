@@ -1,6 +1,6 @@
 namespace TodoListApp.WebApi.Models.Models
 {
-    public class TodoTaskCreateDTO
+    public class TodoTaskCreateDto
     {
         public string? Title { get; set; }
 

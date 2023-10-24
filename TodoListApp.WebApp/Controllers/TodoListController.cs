@@ -49,7 +49,7 @@ namespace TodoListApp.WebApp.Controllers
         {
             if (id == null)
             {
-                _ = this.TodoListWebApiService.AddNew(new TodoListCreateDTO()
+                _ = this.TodoListWebApiService.AddNew(new TodoListCreateDto()
                 {
                     Name = name,
                     Description = description
@@ -57,7 +57,7 @@ namespace TodoListApp.WebApp.Controllers
             }
             else
             {
-                _ = this.TodoListWebApiService.UpdateToDoList(id.Value, new TodoListUpdateDTO()
+                _ = this.TodoListWebApiService.UpdateToDoList(id.Value, new TodoListUpdateDto()
                 {
                     Name = name,
                     Description = description
@@ -73,7 +73,7 @@ namespace TodoListApp.WebApp.Controllers
             try
             {
                 // Create a new TodoTask with user-provided values
-                var newTodoTask = new TodoTaskCreateDTO
+                var newTodoTask = new TodoTaskCreateDto
                 {
                     CreatorUserId = 1,  // You may replace this with the actual user ID
                     Description = description,

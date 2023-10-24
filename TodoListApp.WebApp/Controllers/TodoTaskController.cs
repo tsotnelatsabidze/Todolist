@@ -28,7 +28,7 @@ namespace TodoListApp.WebApp.Controllers
         }
 
         [HttpPost]
-        public IActionResult Update(int id, TodoTaskUpdateDTO updatedTask)
+        public IActionResult Update(int id, TodoTaskUpdateDto updatedTask)
         {
             // Validate and update the task in your repository
             if (this.ModelState.IsValid)

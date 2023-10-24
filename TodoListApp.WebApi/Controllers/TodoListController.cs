@@ -34,7 +34,7 @@ namespace TodoListApp.WebApi.Controllers
         }
 
         [HttpPost(Name = "CreateToDoList")]
-        public ActionResult<TodoList> CreateToDoList([FromBody] TodoListCreateDTO todoList)
+        public ActionResult<TodoList> CreateToDoList([FromBody] TodoListCreateDto todoList)
         {
             var result = this.TodoListService.CreateTodoList(this.mapper.Map<Services.Models.TodoList>(todoList));
             return this.Ok(result);
@@ -56,7 +56,7 @@ namespace TodoListApp.WebApi.Controllers
         }
 
         [HttpPut("{id}", Name = "UpdateToDoList")]
-        public ActionResult<TodoList> UpdateToDoList(int id, [FromBody] TodoListUpdateDTO todoList)
+        public ActionResult<TodoList> UpdateToDoList(int id, [FromBody] TodoListUpdateDto todoList)
         {
             try
             {

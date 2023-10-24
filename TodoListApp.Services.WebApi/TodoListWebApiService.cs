@@ -10,7 +10,7 @@ namespace TodoListApp.Services.WebApi
         {
             this.Client = new HttpClient
             {
-                BaseAddress = new Uri("https://localhost:7052/"),
+                BaseAddress = new Uri("https://localhost:5276/"),
             };
         }
 
@@ -30,7 +30,7 @@ namespace TodoListApp.Services.WebApi
             return JsonConvert.DeserializeObject<TodoList>(content);
         }
 
-        public TodoList AddNew(TodoListCreateDTO todoList)
+        public TodoList AddNew(TodoListCreateDto todoList)
         {
             var response = this.Client.PostAsJsonAsync("/TodoList/", todoList).Result;
             string content = response.Content.ReadAsStringAsync().Result;
@@ -43,7 +43,7 @@ namespace TodoListApp.Services.WebApi
             _ = response.Content.ReadAsStringAsync().Result;
         }
 
-        public TodoTask AddNewTask(TodoTaskCreateDTO todoTask)
+        public TodoTask AddNewTask(TodoTaskCreateDto todoTask)
         {
             var response = this.Client.PostAsJsonAsync("/TodoTask/", todoTask).Result;
             string content = response.Content.ReadAsStringAsync().Result;
@@ -57,7 +57,7 @@ namespace TodoListApp.Services.WebApi
             return JsonConvert.DeserializeObject<IEnumerable<TodoTask>>(content);
         }
 
-        public TodoList UpdateToDoList(int id, TodoListUpdateDTO todoListUpdateDTO)
+        public TodoList UpdateToDoList(int id, TodoListUpdateDto todoListUpdateDTO)
         {
             var response = this.Client.PutAsJsonAsync($"/TodoList/{id}", todoListUpdateDTO).Result;
             string content = response.Content.ReadAsStringAsync().Result;
@@ -71,7 +71,7 @@ namespace TodoListApp.Services.WebApi
             return JsonConvert.DeserializeObject<TodoTask>(content);
         }
 
-        public TodoTask UpdateTodoTask(int id, TodoTaskUpdateDTO todoTaskUpdateDTO)
+        public TodoTask UpdateTodoTask(int id, TodoTaskUpdateDto todoTaskUpdateDTO)
         {
             var response = this.Client.PutAsJsonAsync($"/TodoTask/{id}", todoTaskUpdateDTO).Result;
             string content = response.Content.ReadAsStringAsync().Result;
