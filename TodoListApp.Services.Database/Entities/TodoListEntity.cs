@@ -10,7 +10,6 @@ namespace TodoListApp.Services.Database.Entities
 
         public int CreatorUserId { get; set; }
 
-
-        public virtual ICollection<TodoTaskEntity> TodoTasks { get; set; }
+        public virtual ICollection<TodoTaskEntity>? TodoTasks { get; set; }
     }
 }

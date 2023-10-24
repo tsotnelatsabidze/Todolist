@@ -11,77 +11,67 @@ namespace TodoListApp.WebApi.Controllers
     [Route("[controller]")]
     public class TodoTaskController : ODataController
     {
-        public ITodoTaskService TodoTaskService { get; set; }
-
-        private readonly IMapper _mapper;
+        private readonly IMapper mapper;
 
         public TodoTaskController(ITodoTaskService todoTaskService, IMapper mapper)
         {
             this.TodoTaskService = todoTaskService;
-            this._mapper = mapper;
+            this.mapper = mapper;
         }
+
+        public ITodoTaskService TodoTaskService { get; set; }
 
         [HttpPost(Name = "CreateTodoTask")]
         public ActionResult<TodoTask> CreateTodoTask(TodoTaskCreateDTO todoTaskDTO)
         {
-            var todoTaskEntity = this._mapper.Map<Services.Models.TodoTask>(todoTaskDTO);
-            var createdTodoTask = _mapper.Map<TodoTask>(this.TodoTaskService.CreateTodoTask(todoTaskEntity));
+            var todoTaskEntity = this.mapper.Map<Services.Models.TodoTask>(todoTaskDTO);
+            var createdTodoTask = this.mapper.Map<TodoTask>(this.TodoTaskService.CreateTodoTask(todoTaskEntity));
             return this.Ok(createdTodoTask);
         }
 
         [HttpGet]
         [Route("GetToDoTasksByTodoListId")]
-        public ActionResult<IList<TodoTask>> GetToDoTasksByTodoListId(int Id)
+        public ActionResult<IList<TodoTask>> GetToDoTasksByTodoListId(int id)
         {
-            var todoTasks = _mapper.Map<IList<Services.Models.TodoTask>, IList<TodoTask>>(this.TodoTaskService.GetTodoTasksByTodoList(Id));
+            var todoTasks = this.mapper.Map<IList<Services.Models.TodoTask>, IList<TodoTask>>(this.TodoTaskService.GetTodoTasksByTodoList(id));
             return this.Ok(todoTasks);
         }
 
-
         [HttpGet("{Id}", Name = "GetTodoTaskById")]
-        public ActionResult<TodoTask> GetTodoTaskById(int Id)
+        public ActionResult<TodoTask> GetTodoTaskById(int id)
         {
-            var todoTask = this._mapper.Map<TodoTask>(this.TodoTaskService.GetTodoTask(Id));
+            var todoTask = this.mapper.Map<TodoTask>(this.TodoTaskService.GetTodoTask(id));
             return this.Ok(todoTask);
         }
 
         [HttpDelete("{Id}", Name = "DeleteTodoTask")]
-        public ActionResult DeleteTodoTask(int Id)
+        public ActionResult DeleteTodoTask(int id)
         {
             try
             {
-                this.TodoTaskService.DeleteTodoTask(Id);
+                this.TodoTaskService.DeleteTodoTask(id);
             }
             catch (ArgumentNullException)
             {
                 return this.NotFound();
             }
-            catch (Exception)
-            {
-                return this.StatusCode(500);
-            }
 
             return this.Ok();
         }
 
-
         [HttpPut("{Id}", Name = "UpdateTodoTask")]
-        public ActionResult<TodoTask> UpdateTodoTask(int Id, TodoTaskUpdateDTO todoTaskDTO)
+        public ActionResult<TodoTask> UpdateTodoTask(int id, TodoTaskUpdateDTO todoTaskDTO)
         {
             try
             {
-                var todoTaskEntity = _mapper.Map<Services.Models.TodoTask>(todoTaskDTO);
-                var result = TodoTaskService.UpdateTodoTask(Id, todoTaskEntity);
-                var updatedTodoTask = _mapper.Map<TodoTask>(result);
+                var todoTaskEntity = this.mapper.Map<Services.Models.TodoTask>(todoTaskDTO);
+                var result = this.TodoTaskService.UpdateTodoTask(id, todoTaskEntity);
+                var updatedTodoTask = this.mapper.Map<TodoTask>(result);
                 return this.Ok(updatedTodoTask);
             }
             catch (ArgumentNullException)
             {
-                return NotFound();
-            }
-            catch (Exception)
-            {
-                return StatusCode(500);
+                return this.NotFound();
             }
         }
 
@@ -89,8 +79,7 @@ namespace TodoListApp.WebApi.Controllers
         [EnableQuery]
         public IActionResult GetAllTodoTasks()
         {
-            //var todoTasks = _mapper.Map<IQueryable<Services.Models.TodoTask>, IList<TodoTask>>(TodoTaskService.GetAllTodoTasks());
-            return Ok(TodoTaskService.GetAllTodoTasks());
+            return this.Ok(this.TodoTaskService.GetAllTodoTasks());
         }
     }
 }

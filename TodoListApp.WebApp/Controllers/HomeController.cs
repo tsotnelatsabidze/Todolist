@@ -10,17 +10,17 @@ namespace TodoListApp.WebApp.Controllers
 
         public HomeController(ILogger<HomeController> logger)
         {
-            _logger = logger;
+            this._logger = logger;
         }
 
         public IActionResult Index()
         {
-            return View();
+            return this.View();
         }
 
         public IActionResult Privacy()
         {
-            return View();
+            return this.View();
         }
 
 
@@ -29,7 +29,7 @@ namespace TodoListApp.WebApp.Controllers
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            return this.View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? this.HttpContext.TraceIdentifier });
         }
     }
 }

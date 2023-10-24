@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TodoListApp.Services.Database.Entities;
 using TodoListApp.Services.Interfaces;
 using TodoListApp.Services.Models;
@@ -11,16 +6,16 @@ namespace TodoListApp.Services.Database.Services
 {
     public class TodoTaskDatabaseService : ITodoTaskService
     {
-        private readonly TodoListDbContext _context;
+        private readonly TodoListDbContext context;
 
         public TodoTaskDatabaseService(TodoListDbContext context)
         {
-            _context = context;
+            this.context = context;
         }
 
         public TodoTask CreateTodoTask(TodoTask todoTask)
         {
-            var result = _context.TodoTasks.Add(new TodoTaskEntity()
+            var result = this.context.TodoTasks.Add(new TodoTaskEntity()
             {
                 Title = todoTask.Title,
                 Description = todoTask.Description,
@@ -29,10 +24,10 @@ namespace TodoListApp.Services.Database.Services
                 CreatorUserId = todoTask.CreatorUserId,
                 CreateDate = DateTime.Now,
                 DueDate = todoTask.DueDate,
-                TodoListId = todoTask.TodoListId
+                TodoListId = todoTask.TodoListId,
             });
 
-            _context.SaveChanges();
+            _ = this.context.SaveChanges();
 
             return new TodoTask()
             {
@@ -44,24 +39,24 @@ namespace TodoListApp.Services.Database.Services
                 CreatorUserId = result.Entity.CreatorUserId,
                 CreateDate = result.Entity.CreateDate,
                 DueDate = result.Entity.DueDate,
-                TodoListId = result.Entity.TodoListId
+                TodoListId = result.Entity.TodoListId,
             };
         }
 
         public void DeleteTodoTask(int todoTaskId)
         {
-            var todoTask = _context.TodoTasks.FirstOrDefault(x => x.Id == todoTaskId);
+            var todoTask = this.context.TodoTasks.FirstOrDefault(x => x.Id == todoTaskId);
 
             if (todoTask != null)
             {
-                _context.TodoTasks.Remove(todoTask);
-                _context.SaveChanges();
+                _ = this.context.TodoTasks.Remove(todoTask);
+                _ = this.context.SaveChanges();
             }
         }
 
         public IQueryable<TodoTask> GetAllTodoTasks()
         {
-            return _context.TodoTasks.Select(x => new TodoTask()
+            return this.context.TodoTasks.Select(x => new TodoTask()
             {
                 Id = x.Id,
                 Title = x.Title,
@@ -77,7 +72,8 @@ namespace TodoListApp.Services.Database.Services
 
         public TodoTask GetTodoTask(int todoTaskId)
         {
-            var todoTask = _context.TodoTasks.FirstOrDefault(x => x.Id == todoTaskId);
+            var todoTask = this.context.TodoTasks.FirstOrDefault(x => x.Id == todoTaskId);
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
             return new TodoTask()
             {
                 Id = todoTask.Id,
@@ -88,13 +84,14 @@ namespace TodoListApp.Services.Database.Services
                 CreatorUserId = todoTask.CreatorUserId,
                 CreateDate = todoTask.CreateDate,
                 DueDate = todoTask.DueDate,
-                TodoListId = todoTask.TodoListId
+                TodoListId = todoTask.TodoListId,
             };
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
         }
 
         public List<TodoTask> GetTodoTasksByTodoList(int todoListId)
         {
-            var result = _context.TodoTasks.Where(x => x.TodoListId == todoListId).ToList();
+            var result = this.context.TodoTasks.Where(x => x.TodoListId == todoListId).ToList();
 
             return result.Select(x => new TodoTask()
             {
@@ -106,16 +103,16 @@ namespace TodoListApp.Services.Database.Services
                 CreatorUserId = x.CreatorUserId,
                 CreateDate = x.CreateDate,
                 DueDate = x.DueDate,
-                TodoListId = x.TodoListId
+                TodoListId = x.TodoListId,
             }).ToList();
         }
 
         public TodoTask UpdateTodoTask(int id, TodoTask todoTask)
         {
-            var todoTaskEntity = _context.TodoTasks.FirstOrDefault(x => x.Id == id);
+            var todoTaskEntity = this.context.TodoTasks.FirstOrDefault(x => x.Id == id);
             if (todoTaskEntity == null)
             {
-                throw new ArgumentNullException("TodoTask not found");
+                throw new ArgumentNullException(nameof(todoTask), "TodoTask not found");
             }
 
             todoTaskEntity.Title = todoTask.Title;
@@ -124,7 +121,7 @@ namespace TodoListApp.Services.Database.Services
             todoTaskEntity.DueDate = todoTask.DueDate;
             todoTaskEntity.AssignedUserId = todoTask.AssignedUserId;
 
-            _context.SaveChanges();
+            _ = this.context.SaveChanges();
 
             return new TodoTask()
             {

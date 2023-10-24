@@ -6,44 +6,42 @@ namespace TodoListApp.Services.WebApi
 {
     public class TodoListWebApiService
     {
-        public HttpClient Client { get; set; }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="TodoListWebApiService"/> class.
-        /// </summary>
         public TodoListWebApiService()
         {
-            this.Client = new HttpClient();
-            this.Client.BaseAddress = new Uri("https://localhost:7052/");
+            this.Client = new HttpClient
+            {
+                BaseAddress = new Uri("https://localhost:7052/"),
+            };
         }
+
+        public HttpClient Client { get; set; }
 
         public List<TodoList> GetTodoLists()
         {
-            var response = Client.GetAsync("/TodoList").Result;
+            var response = this.Client.GetAsync("/TodoList").Result;
             string content = response.Content.ReadAsStringAsync().Result;
             return JsonConvert.DeserializeObject<List<TodoList>>(content);
         }
 
         public TodoList GetTodoListDetails(int id)
         {
-            var response = Client.GetAsync($"/TodoList/{id}").Result;
+            var response = this.Client.GetAsync($"/TodoList/{id}").Result;
             string content = response.Content.ReadAsStringAsync().Result;
             return JsonConvert.DeserializeObject<TodoList>(content);
         }
 
         public TodoList AddNew(TodoListCreateDTO todoList)
         {
-            var response = Client.PostAsJsonAsync("/TodoList/", todoList).Result;
+            var response = this.Client.PostAsJsonAsync("/TodoList/", todoList).Result;
             string content = response.Content.ReadAsStringAsync().Result;
             return JsonConvert.DeserializeObject<TodoList>(content);
         }
 
         public void DeleteTodoList(int todoListId)
         {
-            var response = Client.DeleteAsync($"/TodoList/{todoListId}").Result;
+            var response = this.Client.DeleteAsync($"/TodoList/{todoListId}").Result;
             _ = response.Content.ReadAsStringAsync().Result;
         }
-
 
         public TodoTask AddNewTask(TodoTaskCreateDTO todoTask)
         {

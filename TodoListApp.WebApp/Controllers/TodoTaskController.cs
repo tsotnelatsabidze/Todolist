@@ -11,43 +11,43 @@ namespace TodoListApp.WebApp.Controllers
 
         public TodoTaskController(TodoListWebApiService todoListWebApiService)
         {
-            TodoListWebApiService = todoListWebApiService;
+            this.TodoListWebApiService = todoListWebApiService;
         }
 
 
         public IActionResult Edit(int taskId)
         {
-            TodoTask todoTask = TodoListWebApiService.GetTodoTaskById(taskId);
+            TodoTask todoTask = this.TodoListWebApiService.GetTodoTaskById(taskId);
 
             if (todoTask == null)
             {
-                return NotFound(); // Handle not found task
+                return this.NotFound(); // Handle not found task
             }
 
-            return View(todoTask);
+            return this.View(todoTask);
         }
 
         [HttpPost]
         public IActionResult Update(int id, TodoTaskUpdateDTO updatedTask)
         {
             // Validate and update the task in your repository
-            if (ModelState.IsValid)
+            if (this.ModelState.IsValid)
             {
-                TodoListWebApiService.UpdateTodoTask(id, updatedTask);
-                return RedirectToAction("Index", "TodoList"); // Redirect to the Todo List view
+                _ = this.TodoListWebApiService.UpdateTodoTask(id, updatedTask);
+                return this.RedirectToAction("Index", "TodoList"); // Redirect to the TodList  view
             }
 
             // If validation fails, redisplay the edit view with validation errors
-            return View(updatedTask);
+            return this.View(updatedTask);
         }
 
         [HttpPost]
         public IActionResult Delete(int taskId)
         {
-            TodoListWebApiService.DeleteTodoTask(taskId);
+            this.TodoListWebApiService.DeleteTodoTask(taskId);
 
             // If validation fails, redisplay the edit view with validation errors
-            return Ok();
+            return this.Ok();
         }
 
     }

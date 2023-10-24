@@ -9,36 +9,35 @@ namespace TodoListApp.WebApi.Controllers
     [Route("[controller]")]
     public class TodoListController : ControllerBase
     {
-        public ITodoListService TodoListService { get; set; }
-
-        private readonly IMapper _mapper;
+        private readonly IMapper mapper;
 
         public TodoListController(ITodoListService todoListService, IMapper mapper)
         {
-            TodoListService = todoListService;
-            _mapper = mapper;
+            this.TodoListService = todoListService;
+            this.mapper = mapper;
         }
+
+        public ITodoListService TodoListService { get; set; }
 
         [HttpGet(Name = "GetToDoLists")]
         public ActionResult<TodoList> GetToDoLists()
         {
-            var todoList = TodoListService.GetTodoLists();
-            return Ok(todoList);
+            var todoList = this.TodoListService.GetTodoLists();
+            return this.Ok(todoList);
         }
 
         [HttpGet("{todoListId}", Name = "GetToDoList")]
         public ActionResult<TodoList> GetToDoList(int todoListId)
         {
-            var todoList = TodoListService.GetTodoListById(todoListId);
-            return Ok(todoList);
+            var todoList = this.TodoListService.GetTodoListById(todoListId);
+            return this.Ok(todoList);
         }
-
 
         [HttpPost(Name = "CreateToDoList")]
         public ActionResult<TodoList> CreateToDoList([FromBody] TodoListCreateDTO todoList)
         {
-            var result = TodoListService.CreateTodoList(_mapper.Map<Services.Models.TodoList>(todoList));
-            return Ok(result);
+            var result = this.TodoListService.CreateTodoList(this.mapper.Map<Services.Models.TodoList>(todoList));
+            return this.Ok(result);
         }
 
         [HttpDelete("{id}", Name = "DeleteToDoList")]
@@ -46,18 +45,14 @@ namespace TodoListApp.WebApi.Controllers
         {
             try
             {
-                TodoListService.DeleteTodoList(id);
+                this.TodoListService.DeleteTodoList(id);
             }
             catch (ArgumentNullException)
             {
-                return NotFound();
-            }
-            catch (Exception)
-            {
-                return StatusCode(500);
+                return this.NotFound();
             }
 
-            return Ok();
+            return this.Ok();
         }
 
         [HttpPut("{id}", Name = "UpdateToDoList")]
@@ -65,16 +60,12 @@ namespace TodoListApp.WebApi.Controllers
         {
             try
             {
-                var result = TodoListService.UpdateTodoList(id, _mapper.Map<Services.Models.TodoList>(todoList));
-                return Ok(result);
+                var result = this.TodoListService.UpdateTodoList(id, this.mapper.Map<Services.Models.TodoList>(todoList));
+                return this.Ok(result);
             }
             catch (ArgumentNullException)
             {
-                return NotFound();
-            }
-            catch (Exception)
-            {
-                return StatusCode(500);
+                return this.NotFound();
             }
         }
     }
