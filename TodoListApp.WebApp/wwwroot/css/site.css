@@ -16,3 +16,7 @@ html {
 body {
   margin-bottom: 60px;
 }
+.overdue {
+    color: #FF0000; /* Text color for highlighting */
+    font-weight: bold; /* Make text bold for emphasis */
+}

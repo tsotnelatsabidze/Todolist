@@ -6,8 +6,8 @@ namespace TodoListApp.WebApi.Profiles
     {
         public TodoListCreateProfile()
         {
-            CreateMap<Services.Models.TodoList, Models.Models.TodoListCreateDTO>();
-            CreateMap<Models.Models.TodoListCreateDTO, Services.Models.TodoList>();
+            _ = this.CreateMap<Services.Models.TodoList, Models.Models.TodoListCreateDTO>();
+            _ = this.CreateMap<Models.Models.TodoListCreateDTO, Services.Models.TodoList>();
         }
     }
 }
