@@ -1,4 +1,4 @@
-namespace TodoListApp.Services.Interfaces
+namespace TodoListApp.Services.Database.Interfaces
 {
     public interface IRepository<TEntity> where TEntity : class
     {
