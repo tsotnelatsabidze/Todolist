@@ -10,7 +10,7 @@ namespace TodoListApp.Services.WebApi
         {
             this.Client = new HttpClient
             {
-                BaseAddress = new Uri("https://localhost:5276/"),
+                BaseAddress = new Uri("http://localhost:5276/"),
             };
         }
 

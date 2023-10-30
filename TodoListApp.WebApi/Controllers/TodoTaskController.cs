@@ -22,9 +22,9 @@ namespace TodoListApp.WebApi.Controllers
         public ITodoTaskService TodoTaskService { get; set; }
 
         [HttpPost(Name = "CreateTodoTask")]
-        public ActionResult<TodoTask> CreateTodoTask(TodoTaskCreateDto todoTaskDTO)
+        public ActionResult<TodoTask> CreateTodoTask(TodoTaskCreateDto todoTaskDto)
         {
-            var todoTaskEntity = this.mapper.Map<Services.Models.TodoTask>(todoTaskDTO);
+            var todoTaskEntity = this.mapper.Map<Services.Models.TodoTask>(todoTaskDto);
             var createdTodoTask = this.mapper.Map<TodoTask>(this.TodoTaskService.CreateTodoTask(todoTaskEntity));
             return this.Ok(createdTodoTask);
         }
@@ -60,11 +60,11 @@ namespace TodoListApp.WebApi.Controllers
         }
 
         [HttpPut("{Id}", Name = "UpdateTodoTask")]
-        public ActionResult<TodoTask> UpdateTodoTask(int id, TodoTaskUpdateDto todoTaskDTO)
+        public ActionResult<TodoTask> UpdateTodoTask(int id, TodoTaskUpdateDto todoTaskDto)
         {
             try
             {
-                var todoTaskEntity = this.mapper.Map<Services.Models.TodoTask>(todoTaskDTO);
+                var todoTaskEntity = this.mapper.Map<Services.Models.TodoTask>(todoTaskDto);
                 var result = this.TodoTaskService.UpdateTodoTask(id, todoTaskEntity);
                 var updatedTodoTask = this.mapper.Map<TodoTask>(result);
                 return this.Ok(updatedTodoTask);

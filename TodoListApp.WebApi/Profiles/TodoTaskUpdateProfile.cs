@@ -1,5 +1,12 @@
-﻿namespace TodoListApp.WebApi.Profiles;
+using AutoMapper;
 
-public class TodoTaskUpdateProfile
+namespace TodoListApp.WebApi.Profiles
 {
+    public class TodoTaskUpdateProfile : Profile
+    {
+        public TodoTaskUpdateProfile()
+        {
+            _ = this.CreateMap<Models.Models.TodoTaskUpdateDto, Services.Models.TodoTask>();
+        }
+    }
 }
