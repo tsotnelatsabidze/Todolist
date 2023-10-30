@@ -3,9 +3,9 @@ using TodoListApp.Services.Database.Interfaces;
 
 namespace TodoListApp.Services.Database.Repositories
 {
-    public class TagReposiotry : GenericRepository<TagEntity>, ITagReposiotry
+    public class TodoTaskReposiotry : GenericRepository<TodoTaskEntity>, ITodoTaskReposiotry
     {
-        public TagReposiotry(TodoListDbContext dbContext)
+        public TodoTaskReposiotry(TodoListDbContext dbContext)
             : base(dbContext)
         {
         }

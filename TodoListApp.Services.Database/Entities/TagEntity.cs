@@ -1,49 +1,11 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TodoListApp.Services.Database.Interfaces;
-using TodoListApp.Services.Interfaces;
-using TodoListApp.Services.Models;
-
-namespace TodoListApp.Services.Database.Services
+namespace TodoListApp.Services.Database.Entities
 {
-    public class TagService : ITagService
+    public class TagEntity
     {
-        public ITagReposiotry TagReposiotry { get; set; }
+        public int Id { get; set; }
 
-        public TagService(ITagReposiotry tagReposiotry)
-        {
-            TagReposiotry = tagReposiotry;
-        }
+        public string? Name { get; set; }
 
-        public Tag CreateTag(string tag)
-        {
-            var newTag = new Entities.TagEntity()
-            {
-                Name = tag
-            };
-
-            TagReposiotry.Insert(newTag);
-
-            return new Tag()
-            {
-                Id = newTag.Id,
-                Name = newTag.Name
-            };
-        }
-
-        public Tag GetTag(int id)
-        {
-            var tagEntity = TagReposiotry.GetById(id);
-            return new Tag()
-            {
-                Id = tagEntity.Id,
-                Name = tagEntity.Name
-            };
-        }
-
-
+        public ICollection<TodoTaskEntity>? TodoTasks { get; set; }
     }
 }

@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TodoListApp.Services.Database.Interfaces;
 using TodoListApp.Services.Interfaces;
 using TodoListApp.Services.Models;
@@ -15,17 +10,17 @@ namespace TodoListApp.Services.Database.Services
 
         public TagService(ITagReposiotry tagReposiotry)
         {
-            TagReposiotry = tagReposiotry;
+            this.TagReposiotry = tagReposiotry;
         }
 
         public Tag CreateTag(string tag)
         {
             var newTag = new Entities.TagEntity()
             {
-                Name = tag
+                Name = tag,
             };
 
-            TagReposiotry.Insert(newTag);
+            this.TagReposiotry.Insert(newTag);
 
             return new Tag()
             {
@@ -36,7 +31,7 @@ namespace TodoListApp.Services.Database.Services
 
         public Tag GetTag(int id)
         {
-            var tagEntity = TagReposiotry.GetById(id);
+            var tagEntity = this.TagReposiotry.GetById(id);
             return new Tag()
             {
                 Id = tagEntity.Id,

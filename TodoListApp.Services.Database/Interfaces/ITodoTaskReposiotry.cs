@@ -1,8 +1,9 @@
 using TodoListApp.Services.Database.Entities;
+using TodoListApp.Services.Interfaces;
 
 namespace TodoListApp.Services.Database.Interfaces
 {
-    public interface ITodoListRepository : IRepository<TodoListEntity>
+    public interface ITodoTaskReposiotry : IRepository<TodoTaskEntity>
     {
     }
 }

@@ -2,7 +2,6 @@ using AutoMapper;
 
 namespace TodoListApp.WebApi.Profiles
 {
-
     public class TodoTaskCreateProfile : Profile
     {
         public TodoTaskCreateProfile()
