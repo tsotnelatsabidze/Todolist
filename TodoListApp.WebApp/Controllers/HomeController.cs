@@ -1,35 +1,157 @@
-using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
-using TodoListApp.WebApp.Models;
+using System.Diagnostics.Metrics;
+using System.Net.Http.Json;
+using Newtonsoft.Json;
+using TodoListApp.WebApi.Models.Models;
 
 namespace TodoListApp.WebApp.Controllers
 {
-    public class HomeController : Controller
+    public class TodoListWebApiService
     {
-        private readonly ILogger<HomeController> _logger;
+        public HttpClient Client { get; set; }
 
-        public HomeController(ILogger<HomeController> logger)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TodoListWebApiService"/> class.
+        /// </summary>
+        public TodoListWebApiService()
         {
-            this._logger = logger;
+            this.Client = new HttpClient();
+            this.Client.BaseAddress = new Uri("https://localhost:7052/");
         }
 
-        public IActionResult Index()
+        public List<TodoList> GetTodoLists()
         {
-            return this.View();
+            var response = Client.GetAsync("/TodoList").Result;
+            var content = response.Content.ReadAsStringAsync().Result;
+            return JsonConvert.DeserializeObject<List<TodoList>>(content);
         }
 
-        public IActionResult Privacy()
+        public async Task<TodoList> GetTodoListDetails(int id)
         {
-            return this.View();
+            var response = await Client.GetAsync($"TodoList?$expand=TodoTasks&$filter=Id eq {id}");
+            var content = await response.Content.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject<IEnumerable<TodoList>>(content).First();
+        }
+
+        public async Task<IEnumerable<TodoList>> GetTodoListForUser(string userId)
+        {
+            var response = await Client.GetAsync($"TodoList?$expand=TodoTasks&$filter=CreatorUserId eq '{userId}'");
+            var content = await response.Content.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject<IEnumerable<TodoList>>(content);
+        }
+
+        public async Task<TodoList> GetTodoList(int id)
+        {
+            var response = await Client.GetAsync($"/TodoList/{id}");
+            var content = await response.Content.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject<TodoList>(content);
+        }
+        public async Task<TodoList> AddNewAsync(TodoListCreateDto todoList)
+        {
+            var response = await Client.PostAsJsonAsync("/TodoList/", todoList);
+            string content = await response.Content.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject<TodoList>(content);
+        }
+
+        public async Task<TodoList> Delete(int todoListId)
+        {
+            var response = await Client.DeleteAsync($"/TodoList/{todoListId}");
+            var content = await response.Content.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject<TodoList>(content);
         }
 
 
-
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
+        public async Task<TodoTask> AddNewTaskAsync(TodoTaskCreateDto todoTask)
         {
-            return this.View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? this.HttpContext.TraceIdentifier });
+            var response = await Client.PostAsJsonAsync("/TodoTask/", todoTask);
+            string content = await response.Content.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject<TodoTask>(content);
+        }
+
+        public IEnumerable<TodoTask> GetToDoTasksByToDoList(int todoListId)
+        {
+            var response = Client.GetAsync($"/TodoTask?$filter=todoListId eq {todoListId}").Result;
+            var content = response.Content.ReadAsStringAsync().Result;
+            return JsonConvert.DeserializeObject<IEnumerable<TodoTask>>(content);
+        }
+
+        public async Task<TodoList> Update(int id, TodoList todoList)
+        {
+            var response = await Client.PutAsJsonAsync($"/TodoList/{id}", todoList);
+            var content = await response.Content.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject<TodoList>(content);
+        }
+
+
+        public async Task<TodoTask> GetTodoTaskById(int taskId)
+        {
+            var response = await Client.GetAsync($"/TodoTask?$filter=Id eq {taskId}&$expand=Tags");
+            var content = await response.Content.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject<IEnumerable<TodoTask>>(content).FirstOrDefault();
+        }
+
+        public List<TodoTask> GetTodoTasks()
+        {
+            var response = Client.GetAsync("/TodoTask").Result;
+            var content = response.Content.ReadAsStringAsync().Result;
+            return JsonConvert.DeserializeObject<List<TodoTask>>(content);
+        }
+
+        public async Task<TodoTask> UpdateTodoTask(int id, TodoTaskUpdateDto todoTaskUpdateDTO)
+        {
+            var response = await Client.PutAsJsonAsync($"/TodoTask/{id}", todoTaskUpdateDTO);
+            string content = await response.Content.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject<TodoTask>(content);
+        }
+
+        public async Task DeleteTodoTask(int id)
+        {
+            await Client.DeleteAsync($"/TodoTask/{id}");
+        }
+
+
+        public async Task AddTagToTodoTask(int todoTaskId, string tag)
+        {
+            var todoTask = await GetTodoTaskById(todoTaskId);
+            if (todoTask.Tags.Any(t => t.Name == tag))
+            {
+                return;
+            }
+            else
+            {
+                todoTask.Tags.Add(new TagDto()
+                {
+                    Name = tag
+                });
+            }
+
+            await UpdateTodoTask(todoTaskId, new TodoTaskUpdateDto()
+            {
+                AssignedUserId = todoTask.AssignedUserId,
+                Description = todoTask.Description,
+                DueDate = todoTask.DueDate,
+                Status = todoTask.Status,
+                Title = todoTask.Title,
+                TodoListId = todoTask.TodoListId,
+                Tags = todoTask.Tags
+            });
+        }
+
+        public async Task RemoveTagFromTodoTask(int todoTaskId, string tag)
+        {
+            var todoTask = await GetTodoTaskById(todoTaskId);
+            if (todoTask.Tags.Any(t => t.Name == tag))
+            {
+                await UpdateTodoTask(todoTaskId, new TodoTaskUpdateDto()
+                {
+                    AssignedUserId = todoTask.AssignedUserId,
+                    Description = todoTask.Description,
+                    DueDate = todoTask.DueDate,
+                    Status = todoTask.Status,
+                    Title = todoTask.Title,
+                    TodoListId = todoTask.TodoListId,
+                    Tags = todoTask.Tags.Where(x => x.Name != tag)
+                });
+            }
         }
     }
 }
