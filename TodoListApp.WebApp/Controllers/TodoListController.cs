@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Shared.Web.MvcExtensions;
 using TodoListApp.Services.WebApi;
 using TodoListApp.WebApi.Models.Models;
+using TodoListApp.WebApp.Extensions;
 
 namespace TodoListApp.WebApp.Controllers
 {

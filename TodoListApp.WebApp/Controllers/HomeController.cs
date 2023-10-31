@@ -69,7 +69,7 @@ namespace TodoListApp.WebApp.Controllers
 
         public IEnumerable<TodoTask> GetToDoTasksByToDoList(int todoListId)
         {
-            var response = Client.GetAsync($"/TodoTask?$filter=todoListId eq {todoListId}").Result;
+            var response = this.Client.GetAsync($"/TodoTask?$filter=todoListId eq {todoListId}").Result;
             var content = response.Content.ReadAsStringAsync().Result;
             return JsonConvert.DeserializeObject<IEnumerable<TodoTask>>(content);
         }
@@ -105,13 +105,13 @@ namespace TodoListApp.WebApp.Controllers
 
         public async Task DeleteTodoTask(int id)
         {
-            await Client.DeleteAsync($"/TodoTask/{id}");
+            _ = await this.Client.DeleteAsync($"/TodoTask/{id}");
         }
 
 
         public async Task AddTagToTodoTask(int todoTaskId, string tag)
         {
-            var todoTask = await GetTodoTaskById(todoTaskId);
+            var todoTask = await this.GetTodoTaskById(todoTaskId);
             if (todoTask.Tags.Any(t => t.Name == tag))
             {
                 return;
@@ -124,7 +124,7 @@ namespace TodoListApp.WebApp.Controllers
                 });
             }
 
-            await UpdateTodoTask(todoTaskId, new TodoTaskUpdateDto()
+            _ = await this.UpdateTodoTask(todoTaskId, new TodoTaskUpdateDto()
             {
                 AssignedUserId = todoTask.AssignedUserId,
                 Description = todoTask.Description,
@@ -138,10 +138,10 @@ namespace TodoListApp.WebApp.Controllers
 
         public async Task RemoveTagFromTodoTask(int todoTaskId, string tag)
         {
-            var todoTask = await GetTodoTaskById(todoTaskId);
+            var todoTask = await this.GetTodoTaskById(todoTaskId);
             if (todoTask.Tags.Any(t => t.Name == tag))
             {
-                await UpdateTodoTask(todoTaskId, new TodoTaskUpdateDto()
+                _ = await this.UpdateTodoTask(todoTaskId, new TodoTaskUpdateDto()
                 {
                     AssignedUserId = todoTask.AssignedUserId,
                     Description = todoTask.Description,

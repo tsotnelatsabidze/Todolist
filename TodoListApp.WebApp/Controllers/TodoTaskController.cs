@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Shared.Web.MvcExtensions;
 using TodoListApp.Services.WebApi;
 using TodoListApp.WebApi.Models.Models;
+using TodoListApp.WebApp.Extensions;
 
 namespace TodoListApp.WebApp.Controllers
 {
@@ -51,7 +51,7 @@ namespace TodoListApp.WebApp.Controllers
         /// <param name="employee"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<ActionResult> Create(TodoListCreateDTO? todoList)
+        public async Task<ActionResult> Create(TodoListCreateDto? todoList)
         {
             if (todoList is not null)
             {
@@ -72,11 +72,11 @@ namespace TodoListApp.WebApp.Controllers
         {
             var response = await TodoListWebApiService.GetTodoList(id);
             if (response is not null)
-                {
+            {
                 return View(response);
             }
             else
-                {
+            {
                 return RedirectToAction("Index");
             }
         }
@@ -87,7 +87,7 @@ namespace TodoListApp.WebApp.Controllers
         {
             if (todoList is null)
                 {
-                return RedirectToAction("Edit", new
+                return this.RedirectToAction("Edit", new
                 {
                     todoList.Id
                 });
