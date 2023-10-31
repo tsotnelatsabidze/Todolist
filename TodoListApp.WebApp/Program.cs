@@ -22,26 +22,25 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    _ = app.UseMigrationsEndPoint();
+    app.UseMigrationsEndPoint();
 }
 else
 {
-    _ = app.UseExceptionHandler("/Home/Error");
+    app.UseExceptionHandler("/Home/Error");
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    _ = app.UseHsts();
+    app.UseHsts();
 }
 
-_ = app.UseHttpsRedirection();
-_ = app.UseStaticFiles();
+app.UseHttpsRedirection();
+app.UseStaticFiles();
 
-_ = app.UseRouting();
-_ = app.UseAuthorization();
+app.UseRouting();
+app.UseAuthentication();
+app.UseAuthorization();
 
-_ = app.UseEndpoints(endpoints => { _ = endpoints.MapControllerRoute(name: "TodoTaskEdit", pattern: "TodoTask/Edit/{taskId}", defaults: new { controller = "TodoTask", action = "Edit" }); });
-
-_ = app.UseAuthentication();
-
-_ = app.MapControllerRoute(name: "default", pattern: "{controller=Home}/{action=Index}/{id?}");
-_ = app.MapRazorPages();
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Home}/{action=Index}/{id?}");
+app.MapRazorPages();
 
 app.Run();

@@ -4,9 +4,9 @@ namespace TodoListApp.WebApi.Models.Models
     {
         public int Id { get; set; }
 
-        public string Title { get; set; }
+        public string? Title { get; set; }
 
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         public DateTime CreateDate { get; set; }
 
@@ -14,13 +14,13 @@ namespace TodoListApp.WebApi.Models.Models
 
         public int Status { get; set; }
 
-        public string CreatorUserId { get; set; }
+        public string? CreatorUserId { get; set; }
 
-        public string AssignedUserId { get; set; }
+        public string? AssignedUserId { get; set; }
 
         public int TodoListId { get; set; }
 
-        public IList<TagDto> Tags { get; set; }
+        public IList<TagDto>? Tags { get; set; }
 
         public string StatusDescription
         {

@@ -1,8 +1,8 @@
 namespace TodoListApp.WebApi.Models.Models
 {
-    public class TodoList
+    public class TodoListViewDto
     {
-        public int Id { get; set; }
+        public int? Id { get; set; }
 
         public string? Name { get; set; }
 

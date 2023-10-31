@@ -1,0 +1,28 @@
+@model TodoListApp.WebApi.Models.Models.TodoTask
+
+@{
+    ViewBag.Title = "Delete";
+}
+<div class="container">
+    <h2>Delete</h2>
+    <h3>Are you sure you want to delete this?</h3>
+    <div>
+        <dl class="dl-horizontal">
+            <dt>@Html.DisplayNameFor(model => model.Title)</dt>
+            <dd>@Html.DisplayFor(model => model.Title)</dd>
+            <dt>@Html.DisplayNameFor(model => model.Description)</dt>
+            <dd>@Html.DisplayFor(model => model.Description)</dd>
+        </dl>
+
+        @using (Html.BeginForm())
+        {
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(model => model.Id)
+            @Html.HiddenFor(model => model.TodoListId)
+            <div class="form-actions no-color">
+                <input type="submit" value="Delete" class="btn btn-primary" />
+                @Html.ActionLink("Back to Task", "TodoTasks", "TodoList", new {Id = Model.TodoListId}, htmlAttributes: new { @class = "btn btn-info" })
+            </div>
+        }
+    </div>
+</div>

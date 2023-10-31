@@ -1,0 +1,21 @@
+@model TodoListApp.WebApi.Models.Models.TodoList
+@{
+    ViewBag.Title = "TodoList Details";
+}
+<div class="container">
+    <h2>TodoList Details</h2>
+    <div>
+        <dl class="dl-horizontal">
+            <dt>@Html.DisplayNameFor(model => model.Name)</dt>
+            @Html.DisplayFor(model => model.Name)
+            </dd>
+
+            <dt>@Html.DisplayNameFor(model => model.Description)</dt>
+            <dd>@Html.DisplayFor(model => model.Description)</dd>
+
+    </div>
+    <p>
+        @Html.ActionLink("Edit", "Edit", new { id = Model.Id }, htmlAttributes: new { @class = "btn btn-primary" })
+        @Html.ActionLink("Back to List", "Index", null, htmlAttributes: new { @class = "btn btn-info" })
+    </p>
+</div>

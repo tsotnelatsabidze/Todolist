@@ -1,4 +1,3 @@
-using System.Diagnostics.Metrics;
 using System.Net.Http.Json;
 using Newtonsoft.Json;
 using TodoListApp.WebApi.Models.Models;
@@ -45,6 +44,7 @@ namespace TodoListApp.Services.WebApi
             string content = await response.Content.ReadAsStringAsync();
             return JsonConvert.DeserializeObject<TodoList>(content);
         }
+
         public async Task<TodoList> AddNewAsync(TodoListCreateDto todoList)
         {
             var response = await Client.PostAsJsonAsync("/TodoList/", todoList);
@@ -58,7 +58,6 @@ namespace TodoListApp.Services.WebApi
             string content = await response.Content.ReadAsStringAsync();
             return JsonConvert.DeserializeObject<TodoList>(content);
         }
-
 
         public async Task<TodoTask> AddNewTaskAsync(TodoTaskCreateDto todoTask)
         {
@@ -80,7 +79,6 @@ namespace TodoListApp.Services.WebApi
             string content = await response.Content.ReadAsStringAsync();
             return JsonConvert.DeserializeObject<TodoList>(content);
         }
-
 
         public async Task<TodoTask> GetTodoTaskById(int taskId)
         {
@@ -105,9 +103,8 @@ namespace TodoListApp.Services.WebApi
 
         public async Task DeleteTodoTask(int id)
         {
-            await Client.DeleteAsync($"/TodoTask/{id}");
+            _ = await this.Client.DeleteAsync($"/TodoTask/{id}");
         }
-
 
         public async Task AddTagToTodoTask(int todoTaskId, string tag)
         {
@@ -120,11 +117,11 @@ namespace TodoListApp.Services.WebApi
             {
                 todoTask.Tags.Add(new TagDto()
                 {
-                    Name = tag
+                    Name = tag,
                 });
             }
 
-            await UpdateTodoTask(todoTaskId, new TodoTaskUpdateDto()
+            _ = await this.UpdateTodoTask(todoTaskId, new TodoTaskUpdateDto()
             {
                 AssignedUserId = todoTask.AssignedUserId,
                 Description = todoTask.Description,
@@ -138,10 +135,10 @@ namespace TodoListApp.Services.WebApi
 
         public async Task RemoveTagFromTodoTask(int todoTaskId, string tag)
         {
-            var todoTask = await GetTodoTaskById(todoTaskId);
+            var todoTask = await this.GetTodoTaskById(todoTaskId);
             if (todoTask.Tags.Any(t => t.Name == tag))
             {
-                await UpdateTodoTask(todoTaskId, new TodoTaskUpdateDto()
+                _ = await this.UpdateTodoTask(todoTaskId, new TodoTaskUpdateDto()
                 {
                     AssignedUserId = todoTask.AssignedUserId,
                     Description = todoTask.Description,
