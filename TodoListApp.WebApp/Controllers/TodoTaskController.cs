@@ -44,7 +44,7 @@ namespace TodoListApp.WebApp.Controllers
         [HttpPost]
         public IActionResult Delete(int taskId)
         {
-            this.TodoListWebApiService.DeleteTodoTask(taskId);
+            _ = this.TodoListWebApiService.DeleteTodoTask(taskId);
 
             // If validation fails, redisplay the edit view with validation errors
             return this.Ok();

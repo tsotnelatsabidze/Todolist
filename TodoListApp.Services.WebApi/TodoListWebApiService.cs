@@ -132,7 +132,7 @@ namespace TodoListApp.Services.WebApi
                 Status = todoTask.Status,
                 Title = todoTask.Title,
                 TodoListId = todoTask.TodoListId,
-                Tags = todoTask.Tags
+                Tags = todoTask.Tags,
             });
         }
 
@@ -149,7 +149,7 @@ namespace TodoListApp.Services.WebApi
                     Status = todoTask.Status,
                     Title = todoTask.Title,
                     TodoListId = todoTask.TodoListId,
-                    Tags = todoTask.Tags.Where(x => x.Name != tag)
+                    Tags = todoTask.Tags.Where(x => x.Name != tag),
                 });
             }
         }

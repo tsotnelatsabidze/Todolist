@@ -1,86 +1,110 @@
-using AutoMapper;
-using Microsoft.AspNet.OData;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.OData.Query;
-using TodoListApp.Services.Interfaces;
+using TodoListApp.Services.WebApi;
 using TodoListApp.WebApi.Models.Models;
 
 namespace TodoListApp.WebApp.Controllers
 {
-    [ApiController]
-    [Route("[controller]")]
-    public class TodoListController : ControllerBase
+    public class TodoListController : Controller
     {
-        public ITodoListService TodoListService { get; set; }
-        public ITodoListRepository TodoListRepository { get; set; }
+        public TodoListWebApiService TodoListWebApiService { get; set; }
 
-        private readonly IMapper _mapper;
+        private readonly ILogger<TodoListController> _logger;
 
-        public TodoListController(ITodoListService todoListService, IMapper mapper, ITodoListRepository todoListRepository)
+        public TodoListController(ILogger<TodoListController> logger, TodoListWebApiService todoListWebApiService)
         {
-            TodoListService = todoListService;
-            _mapper = mapper;
-            TodoListRepository = todoListRepository;
+            this._logger = logger;
+            this.TodoListWebApiService = todoListWebApiService;
         }
 
-        [EnableQuery]
-        [HttpGet(Name = "GetToDoLists")]
-        public ActionResult<TodoList> GetToDoLists()
+        public IActionResult Index(int? selectedTodoListId)
         {
-            var todoList = TodoListRepository.GetAll();
-            return Ok(todoList);
+
+            List<TodoList> todoLists = this.TodoListWebApiService.GetTodoLists();
+            this.ViewBag.SelectedTodoListId = selectedTodoListId;
+
+            if (selectedTodoListId != null)
+            {
+                List<TodoTask> todoTasks = this.TodoListWebApiService.GetToDoTasksByToDoList(selectedTodoListId.Value).ToList();
+                return this.View("Index", new Tuple<List<TodoList>, List<TodoTask>>(todoLists, todoTasks));
+            }
+
+            return this.View("Index", new Tuple<List<TodoList>, List<TodoTask>>(todoLists, new List<TodoTask>()));
         }
 
-        [EnableQuery]
-        [HttpGet("{todoListId}", Name = "GetToDoList")]
-        public ActionResult<TodoList> GetToDoList(int todoListId)
+        [HttpGet]
+        public IActionResult GetTodoListDetails(int todoListId)
         {
-            var todoList = TodoListRepository.GetById(todoListId);
-            return Ok(todoList);
+            var todoList = this.TodoListWebApiService.GetTodoListDetails(todoListId);
+            return this.Ok(todoList);
         }
 
-
-        [HttpPost(Name = "CreateToDoList")]
-        public ActionResult<TodoList> CreateToDoList([FromBody] TodoListCreateDto todoList)
+        public IActionResult GetTasks(int todoListId)
         {
-            var result = TodoListService.CreateTodoList(_mapper.Map<Services.Models.TodoList>(todoList));
-            return Ok(result);
+            var todoTasks = this.TodoListWebApiService.GetToDoTasksByToDoList(todoListId);
+            return this.Ok(todoTasks);
         }
 
-        [HttpDelete("{id}", Name = "DeleteToDoList")]
-        public ActionResult DeleteToDoList(int id)
+        [HttpPost]
+        public IActionResult AddOrUpdateTodoList(int? id, string name, string description)
+        {
+            if (id == null)
+            {
+                _ = this.TodoListWebApiService.AddNewAsync(new TodoListCreateDto()
+                {
+                    Name = name,
+                    Description = description
+                });
+            }
+            else
+            {
+                _ = this.TodoListWebApiService.UpdateToDoList(id.Value, new TodoListUpdateDto()
+                {
+                    Name = name,
+                    Description = description
+                });
+            }
+
+            return this.Ok();
+        }
+
+        [HttpPost]
+        public IActionResult AddTodoTask(string title, string description, DateTime dueDate, int selectedTodoListId)
         {
             try
             {
-                TodoListService.DeleteTodoList(id);
-            }
-            catch (ArgumentNullException)
-            {
-                return NotFound();
-            }
-            catch (Exception)
-            {
-                return StatusCode(500);
-            }
+                // Create a new TodoTask with user-provided values
+                var newTodoTask = new TodoTaskCreateDto
+                {
+                    CreatorUserId = 1,  // You may replace this with the actual user ID
+                    Description = description,
+                    Title = title,
+                    DueDate = dueDate,
+                    TodoListId = selectedTodoListId
+                };
 
-            return Ok();
+                _ = this.TodoListWebApiService.AddNewTaskAsync(newTodoTask);
+                return this.Ok();
+            }
+            catch (ArgumentNullException ex)
+            {
+                // Handle exceptions appropriately (log, return error status, etc.)
+                Console.WriteLine($"Error adding new todo task: {ex.Message}");
+                return this.StatusCode(500, "Internal Server Error");
+            }
         }
 
-        [HttpPut("{id}", Name = "UpdateToDoList")]
-        public ActionResult<TodoList> UpdateToDoList(int id, [FromBody] TodoListUpdateDto todoList)
+        [HttpPost]
+        public ActionResult DeleteTodoList(int todoListId)
         {
             try
             {
-                var result = TodoListService.UpdateTodoList(id, _mapper.Map<Services.Models.TodoList>(todoList));
-                return Ok(result);
+                this.TodoListWebApiService.DeleteTodoList(todoListId);
+
+                return this.Json(new { success = true, message = "TodoList deleted successfully." });
             }
-            catch (ArgumentNullException)
+            catch (ArgumentNullException ex)
             {
-                return NotFound();
-            }
-            catch (Exception)
-            {
-                return StatusCode(500);
+                return this.Json(new { success = false, message = "Error deleting todo list: " + ex.Message });
             }
         }
     }

@@ -8,7 +8,7 @@ namespace TodoListApp.Services.Interfaces
 
         void DeleteTodoList(int id);
 
-        List<TodoList> GetTodoLists();
+        public IQueryable<TodoList> GetTodoLists();
 
         TodoList GetTodoListById(int todoListId);
 
