@@ -1,3 +1,5 @@
+using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using TodoListApp.Services.Database.Entities;
 using TodoListApp.Services.Interfaces;
 using TodoListApp.Services.Models;
@@ -6,87 +8,101 @@ namespace TodoListApp.Services.Database.Services
 {
     public class TodoListDatabaseService : ITodoListService
     {
-        private readonly TodoListDbContext dbContext;
+        private readonly TodoListDbContext _dbContext;
 
         public TodoListDatabaseService(TodoListDbContext dbContext)
         {
-            this.dbContext = dbContext;
+            _dbContext = dbContext;
         }
 
-        public TodoList CreateTodoList(TodoList toDoList)
+        public TodoList CreateTodoList(TodoList todoList)
         {
-            var result = this.dbContext.TodoLists.Add(new TodoListEntity()
+            var result = _dbContext.TodoLists.Add(new TodoListEntity()
             {
-                Name = toDoList.Name,
-                Description = toDoList.Description,
+                Name = todoList.Name,
+                Description = todoList.Description,
+                CreatorUserId = todoList.CreatorUserId,
             });
 
-            _ = this.dbContext.SaveChanges();
+            _dbContext.SaveChanges();
 
             return new TodoList()
             {
                 Id = result.Entity.Id,
                 Name = result.Entity.Name,
-                Description = result.Entity.Description,
+                CreatorUserId = result.Entity.CreatorUserId,
+                Description = result.Entity.Description
             };
         }
 
         public void DeleteTodoList(int id)
         {
-            var todoList = this.dbContext.TodoLists.FirstOrDefault(x => x.Id == id);
+            var todoList = _dbContext.TodoLists.FirstOrDefault(x => x.Id == id);
             if (todoList == null)
             {
-                throw new ArgumentNullException(nameof(todoList), "TodoList not found");
+                throw new ArgumentNullException("TodoList not found");
             }
 
-            _ = this.dbContext.TodoLists.Remove(todoList);
-            _ = this.dbContext.SaveChanges();
+            _dbContext.TodoLists.Remove(todoList);
+            _dbContext.SaveChanges();
         }
 
-        public List<TodoList> GetTodoLists()
+        public IQueryable<TodoList> GetTodoLists()
         {
-            return this.dbContext.TodoLists.Select(x => new TodoList
+            // Create the mapping configuration
+            var configuration = new MapperConfiguration(cfg =>
             {
-                Id = x.Id,
-                Name = x.Name,
-                Description = x.Description,
-            }).ToList();
+                cfg.CreateMap<TodoTaskEntity, TodoTask>().PreserveReferences();
+                cfg.CreateMap<TodoListEntity, TodoList>()
+                    .ForCtorParam("todoTasks", opt => opt.MapFrom(src => src.TodoTasks)).PreserveReferences();
+            });
+
+            // Create the mapper
+            IMapper mapper = configuration.CreateMapper();
+
+            // Project the TodoListEntities to TodoList using AutoMapper
+            var todoLists = _dbContext.TodoLists.ProjectTo<TodoList>(mapper.ConfigurationProvider);
+
+            return todoLists;
         }
+
+
+
 
         public TodoList GetTodoListById(int todoListId)
         {
-            var todoListEntity = this.dbContext.TodoLists.FirstOrDefault(x => x.Id == todoListId);
+            var todoListEntity = _dbContext.TodoLists.FirstOrDefault(x => x.Id == todoListId);
             if (todoListEntity == null)
             {
-                throw new ArgumentNullException(nameof(todoListEntity), "TodoList not found");
+                throw new ArgumentNullException("TodoList not found");
             }
 
             return new TodoList()
             {
                 Id = todoListEntity.Id,
                 Name = todoListEntity.Name,
-                Description = todoListEntity.Description,
+                Description = todoListEntity.Description
             };
         }
 
         public TodoList UpdateTodoList(int id, TodoList todoList)
         {
-            var todoListEntity = this.dbContext.TodoLists.FirstOrDefault(x => x.Id == id);
+            var todoListEntity = _dbContext.TodoLists.FirstOrDefault(x => x.Id == id);
             if (todoListEntity == null)
             {
-                throw new ArgumentNullException(nameof(todoListEntity), "TodoList not found");
+                throw new ArgumentNullException("TodoList not found");
             }
 
             todoListEntity.Name = todoList.Name;
             todoListEntity.Description = todoList.Description;
 
-            _ = this.dbContext.SaveChanges();
+            _dbContext.SaveChanges();
 
             return new TodoList()
             {
                 Id = todoListEntity.Id,
                 Name = todoListEntity.Name,
-                Description = todoListEntity.Description,
+                Description = todoListEntity.Description
             };
         }
     }

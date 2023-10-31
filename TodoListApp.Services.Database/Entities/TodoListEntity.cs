@@ -8,7 +8,7 @@ namespace TodoListApp.Services.Database.Entities
 
         public string? Description { get; set; }
 
-        public int CreatorUserId { get; set; }
+        public string? CreatorUserId { get; set; }
 
         public virtual ICollection<TodoTaskEntity>? TodoTasks { get; set; }
     }

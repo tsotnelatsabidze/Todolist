@@ -28,8 +28,8 @@ namespace TodoListApp.WebApi.Controllers
         [HttpGet(Name = "GetToDoLists")]
         public ActionResult<TodoList> GetToDoLists()
         {
-            var todoList = this.TodoListRepository.GetAll();
-            return this.Ok(todoList);
+            var todoList = TodoListRepository.GetAll();
+            return Ok(todoList);
         }
 
         [EnableQuery]
@@ -44,7 +44,7 @@ namespace TodoListApp.WebApi.Controllers
         [HttpPost(Name = "CreateToDoList")]
         public ActionResult<TodoList> CreateToDoList([FromBody] TodoListCreateDto todoList)
         {
-            var result = this.TodoListService.CreateTodoList(_mapper.Map<Services.Models.TodoList>(todoList));
+            var result = TodoListService.CreateTodoList(_mapper.Map<Services.Models.TodoList>(todoList));
             return Ok(result);
         }
 

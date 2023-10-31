@@ -51,7 +51,7 @@ namespace TodoListApp.WebApp.Controllers
         /// <param name="employee"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<ActionResult> Create(TodoListCreateDTO? todoList)
+        public async Task<ActionResult> Create(TodoListCreateDto? todoList)
         {
             if (todoList is not null)
             {
