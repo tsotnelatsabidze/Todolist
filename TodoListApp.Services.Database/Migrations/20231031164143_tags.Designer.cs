@@ -12,8 +12,8 @@ using TodoListApp.Services.Database;
 namespace TodoListApp.Services.Database.Migrations
 {
     [DbContext(typeof(TodoListDbContext))]
-    [Migration("20231023152618_initialMigration")]
-    partial class InitialMigration
+    [Migration("20231031164143_tags")]
+    partial class Tags
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -32,8 +32,8 @@ namespace TodoListApp.Services.Database.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int>("CreatorUserId")
-                        .HasColumnType("int");
+                    b.Property<string>("CreatorUserId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");

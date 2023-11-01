@@ -16,10 +16,12 @@ namespace TodoListApp.Services.Models
 
         public TodoTaskStatus Status { get; set; }
 
-        public int CreatorUserId { get; set; }
+        public string? CreatorUserId { get; set; }
 
-        public int AssignedUserId { get; set; }
+        public string? AssignedUserId { get; set; }
 
         public int TodoListId { get; set; }
+
+        public IEnumerable<Tag>? Tags { get; set; }
     }
 }

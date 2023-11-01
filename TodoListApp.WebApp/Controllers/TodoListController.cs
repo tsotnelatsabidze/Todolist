@@ -18,21 +18,21 @@ namespace TodoListApp.WebApp.Controllers
 
         public TodoListController(ILogger<TodoListController> logger, TodoListWebApiService todoListWebApiService, UserManager<IdentityUser> userManager)
         {
-            _logger = logger;
-            TodoListWebApiService = todoListWebApiService;
-            _userManager = userManager;
+            this._logger = logger;
+            this.TodoListWebApiService = todoListWebApiService;
+            this._userManager = userManager;
         }
 
         public async Task<IActionResult> Index()
         {
-            var todoLists = await TodoListWebApiService.GetTodoListForUser(User.GetUserId());
-            return View("Index", todoLists);
+            var todoLists = await this.TodoListWebApiService.GetTodoListForUser(this.User.GetUserId());
+            return this.View("Index", todoLists);
         }
 
         public async Task<IActionResult> TodoTasks(int id)
         {
-            var todoList = await TodoListWebApiService.GetTodoListDetails(id);
-            return View("TodoTasks", todoList);
+            var todoList = await this.TodoListWebApiService.GetTodoListDetails(id);
+            return this.View("TodoTasks", todoList);
         }
 
         /// <summary>
@@ -42,7 +42,7 @@ namespace TodoListApp.WebApp.Controllers
         [HttpGet]
         public ActionResult Create()
         {
-            return View();
+            return this.View();
         }
 
         /// <summary>
@@ -55,11 +55,11 @@ namespace TodoListApp.WebApp.Controllers
         {
             if (todoList is not null)
             {
-                todoList.CreatorUserId = User.GetUserId();
-                var reqResponse = await TodoListWebApiService.AddNewAsync(todoList);
+                todoList.CreatorUserId = this.User.GetUserId();
+                _ = await this.TodoListWebApiService.AddNewAsync(todoList);
             }
 
-            return RedirectToAction("Index");
+            return this.RedirectToAction("Index");
         }
 
         /// <summary>
@@ -70,14 +70,14 @@ namespace TodoListApp.WebApp.Controllers
         [HttpGet]
         public async Task<ActionResult> Edit(int id)
         {
-            var response = await TodoListWebApiService.GetTodoList(id);
+            var response = await this.TodoListWebApiService.GetTodoList(id);
             if (response is not null)
             {
-                return View(response);
+                return this.View(response);
             }
             else
             {
-                return RedirectToAction("Index");
+                return this.RedirectToAction("Index");
             }
         }
 
@@ -87,37 +87,37 @@ namespace TodoListApp.WebApp.Controllers
         {
             if (todoList is null)
             {
-                return RedirectToAction("Edit", new { todoList.Id });
+                return this.RedirectToAction("Edit", new { todoList.Id });
             }
 
             var reqResponse = await TodoListWebApiService.Update(id, todoList);
-            return RedirectToAction("Index");
+            return this.RedirectToAction("Index");
         }
 
         public async Task<ActionResult> Details(int id)
         {
-            var response = await TodoListWebApiService.GetTodoList(id);
+            var response = await this.TodoListWebApiService.GetTodoList(id);
             if (response is not null)
             {
-                return View(response);
+                return this.View(response);
             }
             else
             {
-                return RedirectToAction("Index");
+                return this.RedirectToAction("Index");
             }
         }
 
         public async Task<ActionResult> Delete(int id)
         {
-            var response = await TodoListWebApiService.GetTodoList(id);
+            var response = await this.TodoListWebApiService.GetTodoList(id);
 
             if (response is not null)
             {
-                return View(response);
+                return this.View(response);
             }
             else
             {
-                return RedirectToAction("Index");
+                return this.RedirectToAction("Index");
             }
         }
 
@@ -129,24 +129,24 @@ namespace TodoListApp.WebApp.Controllers
             {
                 if (todoList.Id == id)
                 {
-                    _ = await TodoListWebApiService.Delete(id);
+                    _ = await this.TodoListWebApiService.Delete(id);
                 }
             }
 
-            return RedirectToAction("Index");
+            return this.RedirectToAction("Index");
         }
 
         [HttpGet]
         public IActionResult GetTodoListDetails(int todoListId)
         {
-            var todoList = TodoListWebApiService.GetTodoList(todoListId);
-            return Ok(todoList);
+            var todoList = this.TodoListWebApiService.GetTodoList(todoListId);
+            return this.Ok(todoList);
         }
 
         public IActionResult GetTasks(int todoListId)
         {
-            var todoTasks = TodoListWebApiService.GetToDoTasksByToDoList(todoListId);
-            return Ok(todoTasks);
+            var todoTasks = this.TodoListWebApiService.GetToDoTasksByToDoList(todoListId);
+            return this.Ok(todoTasks);
         }
     }
 }

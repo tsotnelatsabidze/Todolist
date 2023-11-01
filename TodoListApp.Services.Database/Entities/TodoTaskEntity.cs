@@ -16,12 +16,14 @@ namespace TodoListApp.Services.Database.Entities
 
         public TodoTaskStatus Status { get; set; }
 
-        public int CreatorUserId { get; set; }
+        public string? CreatorUserId { get; set; }
 
-        public int AssignedUserId { get; set; }
+        public string? AssignedUserId { get; set; }
 
         public virtual TodoListEntity? TodoList { get; set; }
 
         public int TodoListId { get; set; }
+
+        public ICollection<TagEntity>? Tags { get; set; }
     }
 }

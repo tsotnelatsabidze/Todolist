@@ -10,6 +10,6 @@ namespace TodoListApp.Services.Models
 
         public string? CreatorUserId { get; set; }
 
-        public IEnumerable<TodoTask> TodoTasks { get; set; }
+        public IEnumerable<TodoTask>? TodoTasks { get; set; }
     }
 }

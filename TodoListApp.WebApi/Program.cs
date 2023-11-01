@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.OData;
 using Microsoft.EntityFrameworkCore;
 using TodoListApp.Services.Database;
+using TodoListApp.Services.Database.Interfaces;
+using TodoListApp.Services.Database.Repositories;
 using TodoListApp.Services.Database.Services;
 using TodoListApp.Services.Interfaces;
 using TodoListApp.WebApi.Profiles;
@@ -22,13 +24,16 @@ builder.Services.AddDbContext<TodoListDbContext>(c =>
 
 builder.Services.AddScoped<ITodoListService, TodoListDatabaseService>();
 builder.Services.AddScoped<ITodoTaskService, TodoTaskDatabaseService>();
+builder.Services.AddScoped<ITodoListRepository, TodoListRepository>();
+builder.Services.AddScoped<ITodoTaskReposiotry, TodoTaskReposiotry>();
+builder.Services.AddScoped<ITagReposiotry, TagReposiotry>();
 builder.Services.AddAutoMapper(typeof(TodoListCreateProfile));
 builder.Services.AddAutoMapper(typeof(TodoListUpdateProfile));
 builder.Services.AddAutoMapper(typeof(TodoTaskProfile));
 builder.Services.AddAutoMapper(typeof(TodoTaskUpdateProfile));
 
 builder.Services.AddControllers().AddOData(
-    options => options.Select().Filter().OrderBy().Count().SetMaxTop(null));
+    options => options.Select().Filter().Expand().OrderBy().Count().SetMaxTop(null));
 
 var app = builder.Build();
 

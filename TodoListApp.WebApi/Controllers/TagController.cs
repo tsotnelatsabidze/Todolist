@@ -16,7 +16,7 @@ namespace TodoListApp.WebApi.Controllers
 
         public TagController(ITagReposiotry tagReposiotry)
         {
-            TagReposiotry = tagReposiotry;
+            this.TagReposiotry = tagReposiotry;
         }
 
         [HttpPost(Name = "CreateTag")]
@@ -24,13 +24,13 @@ namespace TodoListApp.WebApi.Controllers
         {
             var tagEntity = new TagEntity()
             {
-                Name = tag.Name
+                Name = tag.Name,
             };
 
-            TagReposiotry.Insert(tagEntity);
+            this.TagReposiotry.Insert(tagEntity);
             tag.Id = tagEntity.Id;
 
-            return Ok(tag);
+            return this.Ok(tag);
         }
 
         [HttpGet("{Id}", Name = "GetTagById")]
@@ -43,7 +43,7 @@ namespace TodoListApp.WebApi.Controllers
         [EnableQuery]
         public IActionResult GetAllTodoTasks()
         {
-            return Ok(TagReposiotry.GetAll());
+            return this.Ok(this.TagReposiotry.GetAll());
         }
     }
 }

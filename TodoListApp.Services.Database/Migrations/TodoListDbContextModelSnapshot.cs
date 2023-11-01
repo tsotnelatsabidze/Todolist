@@ -30,8 +30,8 @@ namespace TodoListApp.Services.Database.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int>("CreatorUserId")
-                        .HasColumnType("int");
+                    b.Property<string>("CreatorUserId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
