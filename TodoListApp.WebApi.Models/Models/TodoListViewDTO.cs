@@ -8,6 +8,6 @@ namespace TodoListApp.WebApi.Models.Models
 
         public string? Description { get; set; }
 
-        public IEnumerable<TodoTask>? TodoTasks { get; set; }
+        public IEnumerable<TodoTaskDto>? TodoTasks { get; set; }
     }
 }

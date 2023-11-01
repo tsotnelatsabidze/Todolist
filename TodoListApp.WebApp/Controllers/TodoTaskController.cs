@@ -68,7 +68,7 @@ namespace TodoListApp.WebApp.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Delete(TodoTask todoTask)
+        public async Task<IActionResult> Delete(TodoTaskDto todoTask)
         {
             await this.TodoListWebApiService.DeleteTodoTask(todoTask.Id);
             return this.RedirectToAction("TodoTasks", "TodoList", new { id = todoTask.TodoListId });

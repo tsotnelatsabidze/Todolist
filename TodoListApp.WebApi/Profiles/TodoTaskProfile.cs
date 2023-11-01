@@ -6,8 +6,8 @@ namespace TodoListApp.WebApi.Profiles
     {
         public TodoTaskProfile()
         {
-            _ = this.CreateMap<Services.Models.TodoTask, Models.Models.TodoTask>();
-            _ = this.CreateMap<Models.Models.TodoTask, Services.Models.TodoTask>();
+            _ = this.CreateMap<Services.Models.TodoTask, Models.Models.TodoTaskDto>();
+            _ = this.CreateMap<Models.Models.TodoTaskDto, Services.Models.TodoTask>();
         }
     }
 }

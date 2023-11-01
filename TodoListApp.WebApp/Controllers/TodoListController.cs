@@ -83,7 +83,7 @@ namespace TodoListApp.WebApp.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit(int id, TodoList todoList)
+        public async Task<ActionResult> Edit(int id, TodoListDto todoList)
         {
             if (todoList is null)
             {
@@ -123,7 +123,7 @@ namespace TodoListApp.WebApp.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Delete(int id, TodoList todoList)
+        public async Task<ActionResult> Delete(int id, TodoListDto todoList)
         {
             if (todoList != null)
             {

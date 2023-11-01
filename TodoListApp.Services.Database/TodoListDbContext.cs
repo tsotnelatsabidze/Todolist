@@ -17,5 +17,7 @@ namespace TodoListApp.Services.Database
         public DbSet<TodoTaskEntity> TodoTasks { get; set; }
 
         public DbSet<TagEntity> Tags { get; set; }
+
+        public DbSet<CommentEntity> Comments { get; set; }
     }
 }

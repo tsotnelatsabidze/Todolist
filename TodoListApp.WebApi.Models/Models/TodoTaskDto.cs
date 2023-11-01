@@ -1,6 +1,6 @@
 namespace TodoListApp.WebApi.Models.Models
 {
-    public class TodoTask
+    public class TodoTaskDto
     {
         public int Id { get; set; }
 
@@ -21,6 +21,8 @@ namespace TodoListApp.WebApi.Models.Models
         public int TodoListId { get; set; }
 
         public IList<TagDto>? Tags { get; set; }
+
+        public IList<CommentDto>? Comments { get; set; }
 
         public string StatusDescription
         {

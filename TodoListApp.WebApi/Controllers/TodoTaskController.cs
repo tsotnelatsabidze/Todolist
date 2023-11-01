@@ -26,17 +26,17 @@ namespace TodoListApp.WebApi.Controllers
         }
 
         [HttpPost(Name = "CreateTodoTask")]
-        public ActionResult<TodoTask> CreateTodoTask(TodoTaskCreateDto todoTaskDto)
+        public ActionResult<TodoTaskDto> CreateTodoTask(TodoTaskCreateDto todoTaskDto)
         {
             var todoTaskEntity = this.mapper.Map<Services.Models.TodoTask>(todoTaskDto);
-            var createdTodoTask = this.mapper.Map<TodoTask>(this.TodoTaskService.CreateTodoTask(todoTaskEntity));
+            var createdTodoTask = this.mapper.Map<TodoTaskDto>(this.TodoTaskService.CreateTodoTask(todoTaskEntity));
             return this.Ok(createdTodoTask);
         }
 
 
 
         [HttpGet("{Id}", Name = "GetTodoTaskById")]
-        public ActionResult<TodoTask> GetTodoTaskById(int Id)
+        public ActionResult<TodoTaskDto> GetTodoTaskById(int Id)
         {
             return this.Ok(this.TodoTaskReposiotry.GetById(Id));
         }
@@ -62,7 +62,7 @@ namespace TodoListApp.WebApi.Controllers
 
 
         [HttpPut("{Id}", Name = "UpdateTodoTask")]
-        public ActionResult<TodoTask> UpdateTodoTask(int Id, TodoTaskUpdateDto todoTaskDto)
+        public ActionResult<TodoTaskDto> UpdateTodoTask(int Id, TodoTaskUpdateDto todoTaskDto)
         {
             try
             {

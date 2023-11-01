@@ -26,7 +26,7 @@ namespace TodoListApp.WebApi.Controllers
 
         [EnableQuery]
         [HttpGet(Name = "GetToDoLists")]
-        public ActionResult<TodoList> GetToDoLists()
+        public ActionResult<TodoListDto> GetToDoLists()
         {
             var todoList = this.TodoListRepository.GetAll();
             return this.Ok(todoList);
@@ -34,14 +34,14 @@ namespace TodoListApp.WebApi.Controllers
 
         [EnableQuery]
         [HttpGet("{todoListId}", Name = "GetToDoList")]
-        public ActionResult<TodoList> GetToDoList(int todoListId)
+        public ActionResult<TodoListDto> GetToDoList(int todoListId)
         {
             var todoList = this.TodoListRepository.GetById(todoListId);
             return this.Ok(todoList);
         }
 
         [HttpPost(Name = "CreateToDoList")]
-        public ActionResult<TodoList> CreateToDoList([FromBody] TodoListCreateDto todoList)
+        public ActionResult<TodoListDto> CreateToDoList([FromBody] TodoListCreateDto todoList)
         {
             var result = this.TodoListService.CreateTodoList(this.mapper.Map<Services.Models.TodoList>(todoList));
             return this.Ok(result);
@@ -67,7 +67,7 @@ namespace TodoListApp.WebApi.Controllers
         }
 
         [HttpPut("{id}", Name = "UpdateToDoList")]
-        public ActionResult<TodoList> UpdateToDoList(int id, [FromBody] TodoListUpdateDto todoList)
+        public ActionResult<TodoListDto> UpdateToDoList(int id, [FromBody] TodoListUpdateDto todoList)
         {
             try
             {

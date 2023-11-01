@@ -25,5 +25,7 @@ namespace TodoListApp.Services.Database.Entities
         public int TodoListId { get; set; }
 
         public ICollection<TagEntity>? Tags { get; set; }
+
+        public ICollection<CommentEntity>? Comments { get; set; }
     }
 }
