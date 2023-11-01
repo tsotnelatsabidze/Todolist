@@ -1,5 +1,6 @@
 using System.Net.Http.Json;
 using Newtonsoft.Json;
+using TodoListApp.Services.Models;
 using TodoListApp.WebApi.Models.Models;
 
 namespace TodoListApp.Services.WebApi
@@ -153,51 +154,14 @@ namespace TodoListApp.Services.WebApi
             }
         }
 
-        public async Task AddCommentToTodoTask(int todoTaskId, string comment)
+        public async Task AddCommentToTodoTask(Comment comment)
         {
-            var todoTask = await this.GetTodoTaskById(todoTaskId);
-            if (todoTask.Comments.Any(t => t.Name == comment))
-            {
-                return;
-            }
-            else
-            {
-                todoTask.Comments.Add(new CommentDto()
-                {
-                    Name = comment,
-                });
-            }
-
-            _ = await this.UpdateTodoTask(todoTaskId, new TodoTaskUpdateDto()
-            {
-                AssignedUserId = todoTask.AssignedUserId,
-                Description = todoTask.Description,
-                DueDate = todoTask.DueDate,
-                Status = todoTask.Status,
-                Title = todoTask.Title,
-                TodoListId = todoTask.TodoListId,
-                Tags = todoTask.Tags,
-                Comments = todoTask.Comments,
-            });
+            _ = await this.Client.PostAsJsonAsync($"/Comment", comment);
         }
 
-        public async Task RemoveCommentFromTodoTask(int todoTaskId, string comment)
+        public async Task RemoveCommentFromTodoTask(string comment)
         {
-            var todoTask = await this.GetTodoTaskById(todoTaskId);
-            if (todoTask.Comments.Any(t => t.Name == comment))
-            {
-                _ = await this.UpdateTodoTask(todoTaskId, new TodoTaskUpdateDto()
-                {
-                    AssignedUserId = todoTask.AssignedUserId,
-                    Description = todoTask.Description,
-                    DueDate = todoTask.DueDate,
-                    Status = todoTask.Status,
-                    Title = todoTask.Title,
-                    TodoListId = todoTask.TodoListId,
-                    Tags = todoTask.Tags,
-                    Comments = todoTask.Comments.Where(x => x.Name != comment),
-                });
-            }
+            await Console.Out.WriteLineAsync(comment);
         }
     }
 }

@@ -17,7 +17,7 @@ namespace TodoListApp.Services.Database.Services
         {
             var newComment = new Entities.CommentEntity()
             {
-                Name = comment,
+                Comment = comment,
             };
 
             this.CommentReposiotry.Insert(newComment);
@@ -25,7 +25,7 @@ namespace TodoListApp.Services.Database.Services
             return new Comment()
             {
                 Id = newComment.Id,
-                Name = newComment.Name,
+                Name = newComment.Comment,
             };
         }
 
@@ -35,7 +35,7 @@ namespace TodoListApp.Services.Database.Services
             return new Comment()
             {
                 Id = commentEntity.Id,
-                Name = commentEntity.Name,
+                Name = commentEntity.Comment,
             };
         }
     }

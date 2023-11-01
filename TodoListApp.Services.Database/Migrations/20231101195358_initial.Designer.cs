@@ -12,8 +12,8 @@ using TodoListApp.Services.Database;
 namespace TodoListApp.Services.Database.Migrations
 {
     [DbContext(typeof(TodoListDbContext))]
-    [Migration("20231101110737_Comments")]
-    partial class Comments
+    [Migration("20231101195358_initial")]
+    partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -23,21 +23,6 @@ namespace TodoListApp.Services.Database.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
-
-            modelBuilder.Entity("CommentEntityTodoTaskEntity", b =>
-                {
-                    b.Property<int>("CommentsId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TodoTasksId")
-                        .HasColumnType("int");
-
-                    b.HasKey("CommentsId", "TodoTasksId");
-
-                    b.HasIndex("TodoTasksId");
-
-                    b.ToTable("CommentEntityTodoTaskEntity");
-                });
 
             modelBuilder.Entity("TagEntityTodoTaskEntity", b =>
                 {
@@ -62,10 +47,22 @@ namespace TodoListApp.Services.Database.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<string>("Name")
+                    b.Property<string>("Comment")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime>("CreatDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("CreatorId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TodoTaskId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("TodoTaskId");
 
                     b.ToTable("Comments");
                 });
@@ -147,21 +144,6 @@ namespace TodoListApp.Services.Database.Migrations
                     b.ToTable("TodoTasks");
                 });
 
-            modelBuilder.Entity("CommentEntityTodoTaskEntity", b =>
-                {
-                    b.HasOne("TodoListApp.Services.Database.Entities.CommentEntity", null)
-                        .WithMany()
-                        .HasForeignKey("CommentsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("TodoListApp.Services.Database.Entities.TodoTaskEntity", null)
-                        .WithMany()
-                        .HasForeignKey("TodoTasksId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("TagEntityTodoTaskEntity", b =>
                 {
                     b.HasOne("TodoListApp.Services.Database.Entities.TagEntity", null)
@@ -175,6 +157,17 @@ namespace TodoListApp.Services.Database.Migrations
                         .HasForeignKey("TodoTasksId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("TodoListApp.Services.Database.Entities.CommentEntity", b =>
+                {
+                    b.HasOne("TodoListApp.Services.Database.Entities.TodoTaskEntity", "TodoTask")
+                        .WithMany("Comments")
+                        .HasForeignKey("TodoTaskId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("TodoTask");
                 });
 
             modelBuilder.Entity("TodoListApp.Services.Database.Entities.TodoTaskEntity", b =>
@@ -191,6 +184,11 @@ namespace TodoListApp.Services.Database.Migrations
             modelBuilder.Entity("TodoListApp.Services.Database.Entities.TodoListEntity", b =>
                 {
                     b.Navigation("TodoTasks");
+                });
+
+            modelBuilder.Entity("TodoListApp.Services.Database.Entities.TodoTaskEntity", b =>
+                {
+                    b.Navigation("Comments");
                 });
 #pragma warning restore 612, 618
         }
