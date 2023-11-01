@@ -23,5 +23,7 @@ namespace TodoListApp.Services.Models
         public int TodoListId { get; set; }
 
         public IEnumerable<Tag>? Tags { get; set; }
+
+        public IEnumerable<Comment>? Comments { get; set; }
     }
 }

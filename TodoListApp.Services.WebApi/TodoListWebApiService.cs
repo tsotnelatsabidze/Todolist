@@ -152,5 +152,52 @@ namespace TodoListApp.Services.WebApi
                 });
             }
         }
+
+        public async Task AddCommentToTodoTask(int todoTaskId, string comment)
+        {
+            var todoTask = await this.GetTodoTaskById(todoTaskId);
+            if (todoTask.Comments.Any(t => t.Name == comment))
+            {
+                return;
+            }
+            else
+            {
+                todoTask.Comment.Add(new CommentDto()
+                {
+                    Name = comment,
+                });
+            }
+
+            _ = await this.UpdateTodoTask(todoTaskId, new TodoTaskUpdateDto()
+            {
+                AssignedUserId = todoTask.AssignedUserId,
+                Description = todoTask.Description,
+                DueDate = todoTask.DueDate,
+                Status = todoTask.Status,
+                Title = todoTask.Title,
+                TodoListId = todoTask.TodoListId,
+                Tags = todoTask.Tags,
+                Comments = todoTask.Comments,
+            });
+        }
+
+        public async Task RemoveCommentFromTodoTask(int todoTaskId, string comment)
+        {
+            var todoTask = await this.GetTodoTaskById(todoTaskId);
+            if (todoTask.Comments.Any(t => t.Name == comment))
+            {
+                _ = await this.UpdateTodoTask(todoTaskId, new TodoTaskUpdateDto()
+                {
+                    AssignedUserId = todoTask.AssignedUserId,
+                    Description = todoTask.Description,
+                    DueDate = todoTask.DueDate,
+                    Status = todoTask.Status,
+                    Title = todoTask.Title,
+                    TodoListId = todoTask.TodoListId,
+                    Tags = todoTask.Tags.Where(x => x.Name != tag),
+                    Comments = todoTask.Comments.Where(x => x.Name != comment),
+                });
+            }
+        }
     }
 }

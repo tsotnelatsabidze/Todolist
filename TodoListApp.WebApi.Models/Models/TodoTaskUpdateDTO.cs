@@ -15,5 +15,7 @@ namespace TodoListApp.WebApi.Models.Models
         public int TodoListId { get; set; }
 
         public IEnumerable<TagDto>? Tags { get; set; }
+
+        public IEnumerable<CommentDto>? Comments { get; set; }
     }
 }
