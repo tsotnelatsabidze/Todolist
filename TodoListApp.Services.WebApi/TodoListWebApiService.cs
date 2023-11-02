@@ -159,9 +159,14 @@ namespace TodoListApp.Services.WebApi
             _ = await this.Client.PostAsJsonAsync($"/Comment", comment);
         }
 
-        public async Task RemoveCommentFromTodoTask(string comment)
+        public async Task DeleteCommentFromTodoTask(Comment comment)
         {
-            await Console.Out.WriteLineAsync(comment);
+            if (comment is null)
+            {
+                throw new ArgumentNullException(nameof(comment));
+            }
+
+            var removeComment = await Client.DeleteAsync($"/Comment");
         }
     }
 }

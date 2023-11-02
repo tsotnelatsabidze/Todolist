@@ -3,9 +3,9 @@ using TodoListApp.Services.Database.Interfaces;
 
 namespace TodoListApp.Services.Database.Repositories
 {
-    public class CommentReposiotry : GenericRepository<CommentEntity>, ICommentReposiotry
+    public class CommentRepository : GenericRepository<CommentEntity>, ICommentReposiotry
     {
-        public CommentReposiotry(TodoListDbContext dbContext)
+        public CommentRepository(TodoListDbContext dbContext)
             : base(dbContext)
         {
         }

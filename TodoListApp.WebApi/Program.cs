@@ -27,7 +27,7 @@ builder.Services.AddScoped<ITodoTaskService, TodoTaskDatabaseService>();
 builder.Services.AddScoped<ITodoListRepository, TodoListRepository>();
 builder.Services.AddScoped<ITodoTaskReposiotry, TodoTaskReposiotry>();
 builder.Services.AddScoped<ITagReposiotry, TagReposiotry>();
-builder.Services.AddScoped<ICommentReposiotry, CommentReposiotry>();
+builder.Services.AddScoped<ICommentReposiotry, CommentRepository>();
 builder.Services.AddAutoMapper(typeof(TodoListCreateProfile));
 builder.Services.AddAutoMapper(typeof(TodoListUpdateProfile));
 builder.Services.AddAutoMapper(typeof(TodoTaskProfile));

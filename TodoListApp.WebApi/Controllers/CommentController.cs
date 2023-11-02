@@ -47,5 +47,21 @@ namespace TodoListApp.WebApi.Controllers
         {
             return this.Ok(this.mapper.ProjectTo<CommentDto>(this.CommentReposiotry.GetAll()));
         }
+
+        [HttpDelete("{id}")]
+        public IActionResult DeleteComment(int id)
+        {
+            var comment = this.CommentReposiotry.GetById(id);
+
+            if (comment == null)
+            {
+                return this.NotFound();
+            }
+
+            this.CommentReposiotry.Delete(comment);
+
+            return this.NoContent();
+        }
+
     }
 }

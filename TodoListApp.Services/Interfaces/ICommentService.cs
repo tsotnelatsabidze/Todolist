@@ -7,5 +7,7 @@ namespace TodoListApp.Services.Interfaces
         public Comment AddComment(string comment);
 
         public Comment GetComment(int id);
+
+        public void DeleteComment(int id);
     }
 }
