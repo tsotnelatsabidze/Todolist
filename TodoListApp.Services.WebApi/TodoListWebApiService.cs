@@ -7,8 +7,6 @@ namespace TodoListApp.Services.WebApi
 {
     public class TodoListWebApiService
     {
-        public HttpClient Client { get; set; }
-
         /// <summary>
         /// Initializes a new instance of the <see cref="TodoListWebApiService"/> class.
         /// </summary>
@@ -19,6 +17,8 @@ namespace TodoListApp.Services.WebApi
                 BaseAddress = new Uri("http://localhost:5276/"),
             };
         }
+
+        public HttpClient Client { get; set; }
 
         public List<TodoListDto> GetTodoLists()
         {
@@ -166,7 +166,7 @@ namespace TodoListApp.Services.WebApi
                 throw new ArgumentNullException(nameof(comment));
             }
 
-            var removeComment = await Client.DeleteAsync($"/Comment");
+            _ = await this.Client.DeleteAsync($"/Comment");
         }
     }
 }

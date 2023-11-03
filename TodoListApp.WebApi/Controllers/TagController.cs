@@ -2,8 +2,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Query;
 using TodoListApp.Services.Database.Entities;
 using TodoListApp.Services.Database.Interfaces;
-using TodoListApp.Services.Database.Repositories;
-using TodoListApp.Services.Interfaces;
 using TodoListApp.WebApi.Models.Models;
 
 namespace TodoListApp.WebApi.Controllers
@@ -12,12 +10,12 @@ namespace TodoListApp.WebApi.Controllers
     [Route("[controller]")]
     public class TagController : ControllerBase
     {
-        public ITagReposiotry TagReposiotry { get; set; }
-
         public TagController(ITagReposiotry tagReposiotry)
         {
             this.TagReposiotry = tagReposiotry;
         }
+
+        public ITagReposiotry TagReposiotry { get; set; }
 
         [HttpPost(Name = "CreateTag")]
         public ActionResult<TagDto> CreateTag(TagDto tag)

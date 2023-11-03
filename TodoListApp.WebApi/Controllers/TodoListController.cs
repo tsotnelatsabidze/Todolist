@@ -11,10 +11,6 @@ namespace TodoListApp.WebApi.Controllers
     [Route("[controller]")]
     public class TodoListController : ControllerBase
     {
-        public ITodoListService TodoListService { get; set; }
-
-        public ITodoListRepository TodoListRepository { get; set; }
-
         private readonly IMapper mapper;
 
         public TodoListController(ITodoListService todoListService, IMapper mapper, ITodoListRepository todoListRepository)
@@ -23,6 +19,10 @@ namespace TodoListApp.WebApi.Controllers
             this.mapper = mapper;
             this.TodoListRepository = todoListRepository;
         }
+
+        public ITodoListService TodoListService { get; set; }
+
+        public ITodoListRepository TodoListRepository { get; set; }
 
         [EnableQuery]
         [HttpGet(Name = "GetToDoLists")]

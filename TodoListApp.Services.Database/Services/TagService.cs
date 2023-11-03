@@ -6,12 +6,12 @@ namespace TodoListApp.Services.Database.Services
 {
     public class TagService : ITagService
     {
-        public ITagReposiotry TagReposiotry { get; set; }
-
         public TagService(ITagReposiotry tagReposiotry)
         {
             this.TagReposiotry = tagReposiotry;
         }
+
+        public ITagReposiotry TagReposiotry { get; set; }
 
         public Tag CreateTag(string tag)
         {

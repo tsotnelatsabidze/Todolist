@@ -90,7 +90,7 @@ namespace TodoListApp.WebApp.Controllers
                 return this.RedirectToAction("Edit", new { todoList.Id });
             }
 
-            var reqResponse = await TodoListWebApiService.Update(id, todoList);
+            _ = await this.TodoListWebApiService.Update(id, todoList);
             return this.RedirectToAction("Index");
         }
 
@@ -125,12 +125,9 @@ namespace TodoListApp.WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Delete(int id, TodoListDto todoList)
         {
-            if (todoList != null)
+            if (todoList != null && todoList.Id == id)
             {
-                if (todoList.Id == id)
-                {
-                    _ = await this.TodoListWebApiService.Delete(id);
-                }
+                _ = await this.TodoListWebApiService.Delete(id);
             }
 
             return this.RedirectToAction("Index");

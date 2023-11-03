@@ -6,11 +6,10 @@ namespace TodoListApp.WebApi.Models.Models
 
         public string Comment { get; set; } = string.Empty;
 
-        public string CreatorId { get; set; }
+        public string? CreatorId { get; set; }
 
         public DateTime CreatDate { get; set; }
 
         public int TodoTaskId { get; set; }
-
     }
 }

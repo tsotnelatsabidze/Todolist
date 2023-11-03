@@ -3,9 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Query;
 using TodoListApp.Services.Database.Entities;
 using TodoListApp.Services.Database.Interfaces;
-using TodoListApp.Services.Database.Repositories;
-using TodoListApp.Services.Interfaces;
-using TodoListApp.Services.Models;
 using TodoListApp.WebApi.Models.Models;
 
 namespace TodoListApp.WebApi.Controllers
@@ -14,10 +11,7 @@ namespace TodoListApp.WebApi.Controllers
     [Route("[controller]")]
     public class CommentController : ControllerBase
     {
-        public ICommentReposiotry CommentReposiotry { get; set; }
         private readonly IMapper mapper;
-
-
 
         public CommentController(ICommentReposiotry commentReposiotry, IMapper mapper)
         {
@@ -25,14 +19,16 @@ namespace TodoListApp.WebApi.Controllers
             this.mapper = mapper;
         }
 
+        public ICommentReposiotry CommentReposiotry { get; set; }
+
         [HttpPost(Name = "AddComment")]
         public ActionResult<CommentDto> AddComment(CommentDto comment)
         {
-            var commentToAdd = mapper.Map<CommentEntity>(comment);
+            var commentToAdd = this.mapper.Map<CommentEntity>(comment);
             commentToAdd.CreatDate = DateTime.Now;
             this.CommentReposiotry.Insert(commentToAdd);
 
-            return this.Ok(mapper.Map<CommentDto>(commentToAdd));
+            return this.Ok(this.mapper.Map<CommentDto>(commentToAdd));
         }
 
         [HttpGet("{Id}", Name = "GetCommentById")]
@@ -62,6 +58,5 @@ namespace TodoListApp.WebApi.Controllers
 
             return this.NoContent();
         }
-
     }
 }
