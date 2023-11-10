@@ -4,11 +4,11 @@ namespace TodoListApp.WebApi.Models.Models
     {
         public int Id { get; set; }
 
-        public string Comment { get; set; } = string.Empty;
+        public string Text { get; set; } = string.Empty;
 
-        public string? CreatorId { get; set; }
+        public string? Creator { get; set; }
 
-        public DateTime CreatDate { get; set; }
+        public DateTime CreateDate { get; set; }
 
         public int TodoTaskId { get; set; }
     }

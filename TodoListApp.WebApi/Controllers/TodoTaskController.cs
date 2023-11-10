@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.OData.Query;
 using Microsoft.AspNetCore.OData.Routing.Controllers;
 using TodoListApp.Services.Database.Interfaces;
 using TodoListApp.Services.Interfaces;
+using TodoListApp.Services.Models;
 using TodoListApp.WebApi.Models.Models;
 
 namespace TodoListApp.WebApi.Controllers
@@ -16,29 +17,27 @@ namespace TodoListApp.WebApi.Controllers
 
         public ITodoTaskReposiotry TodoTaskReposiotry { get; set; }
 
-        private readonly IMapper mapper;
+        private readonly IMapper _mapper;
 
         public TodoTaskController(ITodoTaskService todoTaskService, IMapper mapper, ITodoTaskReposiotry todoTaskReposiotry)
         {
-            this.TodoTaskService = todoTaskService;
-            this.mapper = mapper;
-            this.TodoTaskReposiotry = todoTaskReposiotry;
+            TodoTaskService = todoTaskService;
+            _mapper = mapper;
+            TodoTaskReposiotry = todoTaskReposiotry;
         }
 
         [HttpPost(Name = "CreateTodoTask")]
-        public ActionResult<TodoTaskDto> CreateTodoTask(TodoTaskCreateDto todoTaskDto)
+        public ActionResult<TodoTask> CreateTodoTask(TodoTaskCreateDto todoTaskDTO)
         {
-            var todoTaskEntity = this.mapper.Map<Services.Models.TodoTask>(todoTaskDto);
-            var createdTodoTask = this.mapper.Map<TodoTaskDto>(this.TodoTaskService.CreateTodoTask(todoTaskEntity));
+            var todoTaskEntity = this._mapper.Map<TodoTask>(todoTaskDTO);
+            var createdTodoTask = this._mapper.Map<TodoTask>(this.TodoTaskService.CreateTodoTask(todoTaskEntity));
             return this.Ok(createdTodoTask);
         }
 
-
-
         [HttpGet("{Id}", Name = "GetTodoTaskById")]
-        public ActionResult<TodoTaskDto> GetTodoTaskById(int Id)
+        public ActionResult<TodoTask> GetTodoTaskById(int Id)
         {
-            return this.Ok(this.TodoTaskReposiotry.GetById(Id));
+            return Ok(this.TodoTaskReposiotry.GetById(Id));
         }
 
         [HttpDelete("{Id}", Name = "DeleteTodoTask")]
@@ -50,33 +49,33 @@ namespace TodoListApp.WebApi.Controllers
             }
             catch (ArgumentNullException)
             {
-                return this.NotFound();
+                return NotFound();
             }
             catch (Exception)
             {
-                return this.StatusCode(500);
+                return StatusCode(500);
             }
 
-            return this.Ok();
+            return Ok();
         }
 
 
         [HttpPut("{Id}", Name = "UpdateTodoTask")]
-        public ActionResult<TodoTaskDto> UpdateTodoTask(int Id, TodoTaskUpdateDto todoTaskDto)
+        public ActionResult<TodoTask> UpdateTodoTask(int Id, TodoTaskUpdateDto todoTaskDTO)
         {
             try
             {
-                var todoTaskEntity = this.mapper.Map<Services.Models.TodoTask>(todoTaskDto);
+                var todoTaskEntity = this._mapper.Map<Services.Models.TodoTask>(todoTaskDTO);
                 var result = this.TodoTaskService.UpdateTodoTask(Id, todoTaskEntity);
-                return this.Ok(result);
+                return Ok(result);
             }
             catch (ArgumentNullException)
             {
-                return this.NotFound();
+                return NotFound();
             }
             catch (Exception)
             {
-                return this.StatusCode(500);
+                return StatusCode(500);
             }
         }
 
@@ -84,7 +83,7 @@ namespace TodoListApp.WebApi.Controllers
         [EnableQuery]
         public IActionResult GetAllTodoTasks()
         {
-            return this.Ok(this.TodoTaskReposiotry.GetAll());
+            return Ok(this.TodoTaskReposiotry.GetAll());
         }
     }
 }

@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.OData;
 using Microsoft.EntityFrameworkCore;
 using TodoListApp.Services.Database;
 using TodoListApp.Services.Database.Interfaces;
+using TodoListApp.Services.Database.Profiles;
 using TodoListApp.Services.Database.Repositories;
 using TodoListApp.Services.Database.Services;
 using TodoListApp.Services.Interfaces;
@@ -10,6 +11,7 @@ using TodoListApp.WebApi.Profiles;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
 builder.Services.AddControllers();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -24,14 +26,20 @@ builder.Services.AddDbContext<TodoListDbContext>(c =>
 
 builder.Services.AddScoped<ITodoListService, TodoListDatabaseService>();
 builder.Services.AddScoped<ITodoTaskService, TodoTaskDatabaseService>();
+builder.Services.AddScoped<ICommentsService, CommentsDatabaseServcie>();
+builder.Services.AddScoped<ITagService, TagsDatabaseService>();
 builder.Services.AddScoped<ITodoListRepository, TodoListRepository>();
 builder.Services.AddScoped<ITodoTaskReposiotry, TodoTaskReposiotry>();
+builder.Services.AddScoped<ICommentRepository, CommentRepository>();
 builder.Services.AddScoped<ITagReposiotry, TagReposiotry>();
-builder.Services.AddScoped<ICommentReposiotry, CommentRepository>();
+
+builder.Services.AddAutoMapper(typeof(TagEntityProfile));
+builder.Services.AddAutoMapper(typeof(CommentEntityProfile));
 builder.Services.AddAutoMapper(typeof(TodoListCreateProfile));
 builder.Services.AddAutoMapper(typeof(TodoListUpdateProfile));
 builder.Services.AddAutoMapper(typeof(TodoTaskProfile));
 builder.Services.AddAutoMapper(typeof(TodoTaskUpdateProfile));
+builder.Services.AddAutoMapper(typeof(CommentProfile));
 
 builder.Services.AddControllers().AddOData(
     options => options.Select().Filter().Expand().OrderBy().Count().SetMaxTop(null));
@@ -45,10 +53,10 @@ if (app.Environment.IsDevelopment())
     _ = app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+_ = app.UseHttpsRedirection();
 
-app.UseAuthorization();
+_ = app.UseAuthorization();
 
-app.MapControllers();
+_ = app.MapControllers();
 
 app.Run();

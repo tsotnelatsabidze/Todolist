@@ -1,8 +1,8 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Query;
-using TodoListApp.Services.Database.Entities;
-using TodoListApp.Services.Database.Interfaces;
+using TodoListApp.Services.Interfaces;
+using TodoListApp.Services.Models;
 using TodoListApp.WebApi.Models.Models;
 
 namespace TodoListApp.WebApi.Controllers
@@ -11,52 +11,48 @@ namespace TodoListApp.WebApi.Controllers
     [Route("[controller]")]
     public class CommentController : ControllerBase
     {
-        private readonly IMapper mapper;
+        public ICommentsService CommentsServcie { get; set; }
 
-        public CommentController(ICommentReposiotry commentReposiotry, IMapper mapper)
+        public IMapper Mapper { get; set; }
+
+        public CommentController(ICommentsService commentsServcie, IMapper mapper)
         {
-            this.CommentReposiotry = commentReposiotry;
-            this.mapper = mapper;
-        }
-
-        public ICommentReposiotry CommentReposiotry { get; set; }
-
-        [HttpPost(Name = "AddComment")]
-        public ActionResult<CommentDto> AddComment(CommentDto comment)
-        {
-            var commentToAdd = this.mapper.Map<CommentEntity>(comment);
-            commentToAdd.CreatDate = DateTime.Now;
-            this.CommentReposiotry.Insert(commentToAdd);
-
-            return this.Ok(this.mapper.Map<CommentDto>(commentToAdd));
+            CommentsServcie = commentsServcie;
+            Mapper = mapper;
         }
 
         [HttpGet("{Id}", Name = "GetCommentById")]
         public ActionResult<CommentDto> GetCommentById(int Id)
         {
-            return this.Ok(this.CommentReposiotry.GetById(Id));
-        }
-
-        [HttpGet]
-        [EnableQuery]
-        public IActionResult GetComments()
-        {
-            return this.Ok(this.mapper.ProjectTo<CommentDto>(this.CommentReposiotry.GetAll()));
-        }
-
-        [HttpDelete("{id}")]
-        public IActionResult DeleteComment(int id)
-        {
-            var comment = this.CommentReposiotry.GetById(id);
-
+            var comment = this.CommentsServcie.GetCommentById(Id);
             if (comment == null)
             {
                 return this.NotFound();
             }
 
-            this.CommentReposiotry.Delete(comment);
+            return this.Ok(this.Mapper.Map<CommentDto>(comment));
+        }
 
-            return this.NoContent();
+        [HttpGet]
+        [EnableQuery]
+        public IActionResult GetAllComments()
+        {
+            return Ok(CommentsServcie.GetAll());
+        }
+
+        [HttpPost(Name = "CreateComment")]
+        public ActionResult<CommentDto> CreateComment(CommentDto commentDTO)
+        {
+            var newComment = CommentsServcie.CreateComment(Mapper.Map<Comment>(commentDTO));
+            return Ok(Mapper.Map<CommentDto>(newComment));
+        }
+
+        [HttpDelete("{Id}", Name = "DeleteComment")]
+        public IActionResult DeleteComment(int Id)
+        {
+            CommentsServcie.DeleteComment(Id);
+
+            return Ok();
         }
     }
 }

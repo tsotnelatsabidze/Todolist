@@ -16,31 +16,34 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddSingleton(new TodoListWebApiService());
+builder.Services.AddSingleton(new TodoTasksWebApiService());
+builder.Services.AddSingleton(new CommentsWebApiService());
+builder.Services.AddSingleton(new TagWebApiService());
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseMigrationsEndPoint();
+    _ = app.UseMigrationsEndPoint();
 }
 else
 {
-    app.UseExceptionHandler("/Home/Error");
+    _ = app.UseExceptionHandler("/Home/Error");
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
+    _ = app.UseHsts();
 }
 
-app.UseHttpsRedirection();
-app.UseStaticFiles();
+_ = app.UseHttpsRedirection();
+_ = app.UseStaticFiles();
 
-app.UseRouting();
-app.UseAuthentication();
-app.UseAuthorization();
+_ = app.UseRouting();
 
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
-app.MapRazorPages();
+
+_ = app.UseAuthentication();
+_ = app.UseAuthorization();
+
+_ = app.MapControllerRoute(name: "default", pattern: "{controller=Home}/{action=Index}/{id?}");
+_ = app.MapRazorPages();
 
 app.Run();

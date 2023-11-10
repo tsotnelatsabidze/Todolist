@@ -28,7 +28,7 @@ namespace TodoListApp.Services.Database.Services
                 TodoListId = todoTask.TodoListId,
             });
 
-            _ = this.context.SaveChanges();
+            this.context.SaveChanges();
 
             return new TodoTask()
             {
@@ -50,8 +50,8 @@ namespace TodoListApp.Services.Database.Services
 
             if (todoTask != null)
             {
-                _ = this.context.TodoTasks.Remove(todoTask);
-                _ = this.context.SaveChanges();
+                this.context.TodoTasks.Remove(todoTask);
+                this.context.SaveChanges();
             }
         }
 
@@ -84,7 +84,7 @@ namespace TodoListApp.Services.Database.Services
                 CreatorUserId = todoTask.CreatorUserId,
                 CreateDate = todoTask.CreateDate,
                 DueDate = todoTask.DueDate,
-                TodoListId = todoTask.TodoListId,
+                TodoListId = todoTask.TodoListId
             };
         }
 
@@ -131,11 +131,10 @@ namespace TodoListApp.Services.Database.Services
                         Name = tag.Name,
                     };
                 }
-
                 todoTaskEntity.Tags.Add(tagEntity);
             }
 
-            _ = this.context.SaveChanges();
+            this.context.SaveChanges();
 
             return new TodoTask()
             {
@@ -148,7 +147,7 @@ namespace TodoListApp.Services.Database.Services
                 CreateDate = todoTaskEntity.CreateDate,
                 DueDate = todoTaskEntity.DueDate,
                 TodoListId = todoTaskEntity.TodoListId,
-                Tags = todoTaskEntity.Tags.Select(x => new Tag() { Id = x.Id, Name = x.Name }),
+                Tags = todoTaskEntity.Tags.Select(x => new Tag() { Id = x.Id, Name = x.Name })
             };
         }
     }

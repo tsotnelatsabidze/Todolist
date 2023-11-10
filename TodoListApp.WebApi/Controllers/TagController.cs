@@ -1,7 +1,7 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Query;
-using TodoListApp.Services.Database.Entities;
-using TodoListApp.Services.Database.Interfaces;
+using TodoListApp.Services.Interfaces;
 using TodoListApp.WebApi.Models.Models;
 
 namespace TodoListApp.WebApi.Controllers
@@ -10,38 +10,40 @@ namespace TodoListApp.WebApi.Controllers
     [Route("[controller]")]
     public class TagController : ControllerBase
     {
-        public TagController(ITagReposiotry tagReposiotry)
+        public ITagService TagService { get; set; }
+
+        public IMapper Mapper { get; set; }
+
+        public TagController(ITagService tagService, IMapper mapper)
         {
-            this.TagReposiotry = tagReposiotry;
+            this.TagService = tagService;
+            this.Mapper = mapper;
         }
 
-        public ITagReposiotry TagReposiotry { get; set; }
-
         [HttpPost(Name = "CreateTag")]
-        public ActionResult<TagDto> CreateTag(TagDto tag)
+        public ActionResult<TagDto> CreateTag(int todoTaskId, string tag)
         {
-            var tagEntity = new TagEntity()
-            {
-                Name = tag.Name,
-            };
-
-            this.TagReposiotry.Insert(tagEntity);
-            tag.Id = tagEntity.Id;
-
-            return this.Ok(tag);
+            return Ok(TagService.CreateTag(todoTaskId, tag));
         }
 
         [HttpGet("{Id}", Name = "GetTagById")]
         public ActionResult<TagDto> GetTagById(int Id)
         {
-            return this.Ok(this.TagReposiotry.GetById(Id));
+            return Ok(Mapper.Map<TagDto>(TagService.GetTag(Id)));
         }
 
         [HttpGet]
         [EnableQuery]
         public IActionResult GetAllTodoTasks()
         {
-            return this.Ok(this.TagReposiotry.GetAll());
+            return Ok(TagService.GetAll());
+        }
+
+        [HttpDelete]
+        public IActionResult DeleteTagFromTodoTask(int todoTaskId, string tag)
+        {
+            this.TagService.DeleteTagFromTodoTask(todoTaskId, tag);
+            return NoContent();
         }
     }
 }

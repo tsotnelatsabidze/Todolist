@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Query;
 using TodoListApp.Services.Database.Interfaces;
 using TodoListApp.Services.Interfaces;
+using TodoListApp.Services.Models;
 using TodoListApp.WebApi.Models.Models;
 
 namespace TodoListApp.WebApi.Controllers
@@ -11,40 +12,41 @@ namespace TodoListApp.WebApi.Controllers
     [Route("[controller]")]
     public class TodoListController : ControllerBase
     {
-        private readonly IMapper mapper;
-
-        public TodoListController(ITodoListService todoListService, IMapper mapper, ITodoListRepository todoListRepository)
-        {
-            this.TodoListService = todoListService;
-            this.mapper = mapper;
-            this.TodoListRepository = todoListRepository;
-        }
-
         public ITodoListService TodoListService { get; set; }
 
         public ITodoListRepository TodoListRepository { get; set; }
 
+        private readonly IMapper _mapper;
+
+        public TodoListController(ITodoListService todoListService, IMapper mapper, ITodoListRepository todoListRepository)
+        {
+            TodoListService = todoListService;
+            _mapper = mapper;
+            TodoListRepository = todoListRepository;
+        }
+
         [EnableQuery]
         [HttpGet(Name = "GetToDoLists")]
-        public ActionResult<TodoListDto> GetToDoLists()
+        public ActionResult<TodoList> GetToDoLists()
         {
-            var todoList = this.TodoListRepository.GetAll();
-            return this.Ok(todoList);
+            var todoList = TodoListRepository.GetAll();
+            return Ok(todoList);
         }
 
         [EnableQuery]
         [HttpGet("{todoListId}", Name = "GetToDoList")]
-        public ActionResult<TodoListDto> GetToDoList(int todoListId)
+        public ActionResult<TodoList> GetToDoList(int todoListId)
         {
-            var todoList = this.TodoListRepository.GetById(todoListId);
-            return this.Ok(todoList);
+            var todoList = TodoListRepository.GetById(todoListId);
+            return Ok(todoList);
         }
 
+
         [HttpPost(Name = "CreateToDoList")]
-        public ActionResult<TodoListDto> CreateToDoList([FromBody] TodoListCreateDto todoList)
+        public ActionResult<TodoList> CreateToDoList([FromBody] TodoListCreateDto todoList)
         {
-            var result = this.TodoListService.CreateTodoList(this.mapper.Map<Services.Models.TodoList>(todoList));
-            return this.Ok(result);
+            var result = TodoListService.CreateTodoList(_mapper.Map<Services.Models.TodoList>(todoList));
+            return Ok(result);
         }
 
         [HttpDelete("{id}", Name = "DeleteToDoList")]
@@ -52,35 +54,35 @@ namespace TodoListApp.WebApi.Controllers
         {
             try
             {
-                this.TodoListService.DeleteTodoList(id);
+                TodoListService.DeleteTodoList(id);
             }
             catch (ArgumentNullException)
             {
-                return this.NotFound();
+                return NotFound();
             }
             catch (Exception)
             {
-                return this.StatusCode(500);
+                return StatusCode(500);
             }
 
-            return this.Ok();
+            return Ok();
         }
 
         [HttpPut("{id}", Name = "UpdateToDoList")]
-        public ActionResult<TodoListDto> UpdateToDoList(int id, [FromBody] TodoListUpdateDto todoList)
+        public ActionResult<TodoList> UpdateToDoList(int id, [FromBody] TodoListUpdateDto todoList)
         {
             try
             {
-                var result = this.TodoListService.UpdateTodoList(id, this.mapper.Map<Services.Models.TodoList>(todoList));
-                return this.Ok(result);
+                var result = TodoListService.UpdateTodoList(id, _mapper.Map<Services.Models.TodoList>(todoList));
+                return Ok(result);
             }
             catch (ArgumentNullException)
             {
-                return this.NotFound();
+                return NotFound();
             }
             catch (Exception)
             {
-                return this.StatusCode(500);
+                return StatusCode(500);
             }
         }
     }

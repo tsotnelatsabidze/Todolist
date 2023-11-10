@@ -1,0 +1,32 @@
+@model IEnumerable<TodoListApp.WebApi.Models.Models.TagDto>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tag List</title>
+</head>
+<body>
+
+    <div class="container">
+        <h2 class="mt-4 mb-4">List of Tags</h2>
+
+        @if (Model != null && Model.Any())
+        {
+            <ul class="list-group">
+                @foreach (var tag in Model)
+                {
+                    <li class="list-group-item">
+                        <a href="@Url.Action("TodoTasksByTag", "TodoTask", new { tagId = tag.Id })" class="text-decoration-none">
+                            @tag.Name
+                        </a>
+                    </li>
+                }
+            </ul>
+        }
+        else
+        {
+            <p>No tags available.</p>
+        }
+    </div>
+</body>
+</html>

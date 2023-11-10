@@ -28,7 +28,7 @@
             {
                 foreach (var item in Model.TodoTasks)
                 {
-                    <tr class="@((item.DueDate < DateTime.Now) ? "overdue-task" : "")">
+                    <tr class="@((item.DueDate < DateTime.Now) ? "table-danger" : "")">
                         <td>
                             @Html.ActionLink(item.Title, "Edit", "TodoTask", new { id = item.Id }, htmlAttributes: new { @class = "" })
                         </td>
