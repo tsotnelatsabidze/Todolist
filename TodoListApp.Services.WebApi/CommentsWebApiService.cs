@@ -11,7 +11,7 @@ namespace TodoListApp.Services.WebApi
         public CommentsWebApiService()
         {
             this.Client = new HttpClient();
-            this.Client.BaseAddress = new Uri("https://localhost:5276/");
+            this.Client.BaseAddress = new Uri("http://localhost:5276/");
         }
 
         public async Task<List<CommentDto>> GetCommentsByTodoTaskId()

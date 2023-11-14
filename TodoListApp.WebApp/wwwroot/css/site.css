@@ -1,22 +1,95 @@
+/* General Styles */
 html {
-  font-size: 14px;
+    font-size: 14px;
 }
 
 @media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+    html {
+        font-size: 16px;
+    }
 }
 
 html {
-  position: relative;
-  min-height: 100%;
+    position: relative;
+    min-height: 100%;
 }
 
 body {
-  margin-bottom: 60px;
+    margin-bottom: 60px;
 }
-.overdue {
-    color: #FF0000; /* Text color for highlighting */
-    font-weight: bold; /* Make text bold for emphasis */
+
+
+/* Comment Styles */
+.comment, .comment-item {
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    background-color: #f8f9fa;
 }
+
+.comment-content {
+    padding: 10px;
+}
+
+.comment-text {
+    display: block;
+    margin-bottom: 10px;
+}
+
+.comment-metadata {
+    color: #6c757d;
+}
+
+.comment-info {
+    margin-right: 10px;
+}
+
+/* Tag and Comment Item Styles */
+.tag-item, .comment-item {
+    display: inline-flex;
+    align-items: center;
+    background-color: #3498db;
+    color: #ffffff;
+    padding: 0.25rem 0.5rem;
+    margin-right: 0.5rem;
+    margin-bottom: 0.5rem;
+    border-radius: 0.25rem;
+    transition: background-color 0.3s ease, transform 0.1s ease-in-out;
+}
+
+    .tag-item:hover, .comment-item:hover {
+        background-color: #2980b9;
+    }
+
+.tag-text, .comment-text {
+    margin-right: 0.5rem;
+}
+
+/* Button Styles */
+.btn-close {
+    cursor: pointer;
+    background: none;
+    border: none;
+    color: #ffffff;
+    font-size: 1rem;
+    margin-left: 0.25rem;
+    transition: color 0.3s ease, transform 0.1s ease-in-out;
+}
+
+
+/* Add this to your CSS */
+.btn-close {
+    cursor: pointer;
+    background: none;
+    border: none;
+    color: #ffffff;
+    font-size: 1.5rem; /* Increase the font size */
+    margin-left: 0.25rem;
+    transition: color 0.3s ease, transform 0.1s ease-in-out;
+    padding: 0.2rem 0.4rem; /* Add padding */
+}
+
+    .btn-close:hover {
+        color: #e74c3c;
+        transform: scale(1.2);
+    }

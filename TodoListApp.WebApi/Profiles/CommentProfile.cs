@@ -1,5 +1,4 @@
 using AutoMapper;
-using TodoListApp.Services.Database.Entities;
 
 namespace TodoListApp.WebApi.Profiles
 {
@@ -7,7 +6,7 @@ namespace TodoListApp.WebApi.Profiles
     {
         public CommentProfile()
         {
-            _ = this.CreateMap<Models.Models.CommentDto, CommentEntity>().ReverseMap();
+            _ = this.CreateMap<Services.Models.Comment, Models.Models.CommentDto>().ReverseMap();
         }
     }
 }

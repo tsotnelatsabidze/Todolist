@@ -70,19 +70,54 @@
             <div class="form-group mb-3">
                 @Html.LabelFor(model => model.Tags, htmlAttributes: new { @class = "control-label col-md-2" })
                 <div class="col-md-10">
-                    <ul id="tagList" class="list-group">
+                    <div id="tagList" class="d-flex flex-wrap">
                         @foreach (var tag in Model.Tags)
                         {
-                            <li class="list-group-item d-flex justify-content-between align-items-center">
-                                @tag.Name
-                                <button type="button" class="btn btn-danger btn-sm removeTagBtn">Remove</button>
-                            </li>
+                            <div class="tag-item me-2 mb-2" data-tag="@tag.Name">
+                                <span class="tag-text">@tag.Name</span>
+                                <button type="button" class="btn btn-danger btn-sm removeTagBtn">
+                                    <span class="btn-icon">&times;</span>
+                                </button>
+                            </div>
                         }
-                    </ul>
+                    </div>
                     <button type="button" id="addTagBtn" class="btn btn-primary">Add Tag</button>
                     @Html.ValidationMessageFor(model => model.Tags, "", new { @class = "text-danger" })
                 </div>
             </div>
+
+            <!-- Display comments as a list -->
+            <div class="form-group mb-3">
+                @Html.LabelFor(model => model.Comments, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    <ul id="commentList" class="list-group">
+                        @foreach (var comment in Model.Comments)
+                        {
+                            <li class="list-group-item comment" data-comment="@comment.Id">
+                                <div class="comment-content">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="comment-text">@comment.Text</span>
+                                        <button type="button" class="btn btn-danger btn-sm removeCommentBtn">
+                                            <span class="btn-icon">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="comment-metadata">
+                                        <span class="comment-info">Created by: @comment.Creator</span>
+                                        <span class="comment-info">Date: @comment.CreateDate.ToString("yyyy-MM-dd HH:mm:ss")</span>
+                                    </div>
+                                </div>
+                            </li>
+                        }
+                    </ul>
+                    <button type="button" id="addCommentBtn" class="btn btn-primary mt-2">Add Comment</button>
+                    @Html.ValidationMessageFor(model => model.Comments, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+
+
+
+
             <div class="form-group mb-3">
                 <div class="col-md-offset-2 col-md-10">
                     <input type="submit" value="Save" class="btn btn-primary" />
@@ -91,7 +126,6 @@
 
                 </div>
             </div>
-
         </div>
     }
 
@@ -104,6 +138,7 @@
     <script>
         $(document).ready(function () {
             // Optional: Add event listeners to handle changes
+
             // Add new tag button click event
             $('#addTagBtn').on('click', function () {
                 var newTag = prompt("Enter a new tag:");
@@ -114,29 +149,52 @@
 
             // Remove tag button click event
             $(document).on('click', '.removeTagBtn', function () {
-                var tagToRemove = $(this).closest('li').contents().filter(function () {
-                    return this.nodeType === 3; // Filter out non-text nodes (including whitespaces)
-                }).text().trim();
+                if (confirm("Are you sure you want to remove this tag?")) {
+                    var $tagContainer = $(this).closest('.tag-item');
+                    var tagToRemove = $tagContainer.data('tag');
 
-                removeTag(tagToRemove);
+                    removeTag(tagToRemove, $tagContainer);
+                }
             });
+
+            // Add new comment button click event
+            $('#addCommentBtn').on('click', function () {
+                var newComment = prompt("Enter a new comment:");
+                if (newComment) {
+                    addComment(newComment);
+                }
+            });
+
+            // Remove comment button click event
+            $(document).on('click', '.removeCommentBtn', function () {
+                if (confirm("Are you sure you want to remove this comment?")) {
+                    var commentIdToRemove = $(this).closest('.comment').data('comment');
+                    removeComment(commentIdToRemove);
+                }
+            });
+
+
+
 
 
             // Function to add a tag
             function addTag(tag) {
-                var todoTaskId = @Model.Id; // Get the TodoTaskId from the model
+                var todoTaskId = @Model.Id;
                 $.ajax({
                     url: '/TodoTask/AddTag',
                     type: 'POST',
                     data: { todoTaskId: todoTaskId, tag: tag },
                     success: function () {
-                        // Add the tag to the UI if the server operation is successful
-                        $('#tagList').append(
-                            '<li class="list-group-item d-flex justify-content-between align-items-center">' +
-                            tag +
-                            '<button type="button" class="btn btn-danger btn-sm removeTagBtn">Remove</button>' +
-                            '</li>'
-                        );
+                        // Create the new tag element with the correct structure and styling
+                        var $newTag = $('<div class="tag-item me-2 mb-2" data-tag="' + tag + '">' +
+                            '<span class="tag-text">' + tag + '</span>' +
+                            '<button type="button" class="btn btn-danger btn-sm removeTagBtn">' +
+                            '<span class="btn-icon">&times;</span>' +
+                            '</button>' +
+                            '</div>');
+
+                        // Append the new tag element to the tag list
+                        $('#tagList').append($newTag);
                     },
                     error: function () {
                         alert('Failed to add the tag.');
@@ -144,23 +202,73 @@
                 });
             }
 
+
             // Function to remove a tag
-            function removeTag(tag) {
-                var todoTaskId = @Model.Id; // Get the TodoTaskId from the model
+            function removeTag(tag, $tagContainer) {
+                var todoTaskId = @Model.Id;
                 $.ajax({
                     url: '/TodoTask/RemoveTag',
                     type: 'POST',
                     data: { todoTaskId: todoTaskId, tag: tag },
                     success: function () {
-                        // Remove the tag from the UI if the server operation is successful
-                        $('#tagList').find(':contains("' + tag + '")').closest('li').remove();
+                        // Remove the tag element from the UI
+                        $tagContainer.remove();
                     },
                     error: function () {
                         alert('Failed to remove the tag.');
                     }
                 });
             }
+
+            // Function to add a comment
+            function addComment(comment) {
+                var todoTaskId = @Model.Id;
+                $.ajax({
+                    url: '/TodoTask/AddComment',
+                    type: 'POST',
+                    data: { todoTaskId: todoTaskId, comment: comment },
+                    success: function (newComment) {
+                        console.log(newComment);
+                        // Create the new comment element with the correct structure and details
+                        var $newComment = $('<li class="list-group-item comment" data-comment="' + newComment.id + '">' +
+                            '<div class="comment-content">' +
+                            '<div class="d-flex justify-content-between align-items-center">' +
+                            '<span class="comment-text">' + newComment.text + '</span>' +
+                            '<button type="button" class="btn btn-danger btn-sm removeCommentBtn">' +
+                            '<span class="btn-icon">&times;</span>' +
+                            '</button>' +
+                            '</div>' +
+                            '<div class="comment-metadata">' +
+                            '<span class="comment-info">Created by: ' + newComment.creator + '</span>' +
+                            '<span class="comment-info">Date: ' + newComment.createDate + '</span>' +
+                            '</div>' +
+                            '</div>' +
+                            '</li>');
+
+                        // Append the new comment element to the comment list
+                        $('#commentList').append($newComment);
+                    },
+                    error: function () {
+                        alert('Failed to add the comment.');
+                    }
+                });
+            }
+
+            // Function to remove a comment
+            function removeComment(commentId) {
+                var todoTaskId = @Model.Id;
+                $.ajax({
+                    url: '/TodoTask/RemoveComment',
+                    type: 'POST',
+                    data: { todoTaskId: todoTaskId, commentId: commentId },
+                    success: function () {
+                        $('#commentList').find('[data-comment="' + commentId + '"]').remove();
+                    },
+                    error: function () {
+                        alert('Failed to remove the comment.');
+                    }
+                });
+            }
         });
     </script>
 }
-

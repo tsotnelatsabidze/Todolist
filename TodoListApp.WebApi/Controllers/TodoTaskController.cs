@@ -2,6 +2,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Query;
 using Microsoft.AspNetCore.OData.Routing.Controllers;
+using TodoListApp.Services.Database.Interfaces;
 using TodoListApp.Services.Interfaces;
 using TodoListApp.WebApi.Models.Models;
 
@@ -13,13 +14,15 @@ namespace TodoListApp.WebApi.Controllers
     {
         public ITodoTaskService TodoTaskService { get; set; }
 
+        public ITodoTaskRepository TodoTaskReposiotry { get; set; }
 
         private readonly IMapper _mapper;
 
-        public TodoTaskController(ITodoTaskService todoTaskService, IMapper mapper)
+        public TodoTaskController(ITodoTaskService todoTaskService, IMapper mapper, ITodoTaskRepository todoTaskReposiotry)
         {
             TodoTaskService = todoTaskService;
             _mapper = mapper;
+            TodoTaskReposiotry = todoTaskReposiotry;
         }
 
         [HttpPost(Name = "CreateTodoTask")]
@@ -35,7 +38,7 @@ namespace TodoListApp.WebApi.Controllers
         [HttpGet("{Id}", Name = "GetTodoTaskById")]
         public ActionResult<TodoTaskDto> GetTodoTaskById(int Id)
         {
-            return Ok(TodoTaskService.GetTodoTasksByTodoList(Id));
+            return Ok(TodoTaskReposiotry.GetById(Id));
         }
 
         [HttpDelete("{Id}", Name = "DeleteTodoTask")]
@@ -43,7 +46,7 @@ namespace TodoListApp.WebApi.Controllers
         {
             try
             {
-                DeleteTodoTask(Id);
+                TodoTaskReposiotry.Delete(Id);
             }
             catch (ArgumentNullException)
             {
@@ -81,7 +84,7 @@ namespace TodoListApp.WebApi.Controllers
         [EnableQuery]
         public IActionResult GetAllTodoTasks()
         {
-            return this.Ok(this.TodoTaskService.GetAllTodoTasks());
+            return Ok(TodoTaskReposiotry.GetAll());
         }
     }
 }

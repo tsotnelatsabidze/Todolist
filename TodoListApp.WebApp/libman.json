@@ -1,0 +1,45 @@
+{
+  "version": "1.0",
+  "defaultProvider": "cdnjs",
+  "libraries": [
+    {
+      "destination": "wwwroot/lib/jquery/",
+      "files": [
+        "jquery.min.js",
+        "jquery.js",
+        "jquery.min.map"
+      ],
+      "library": "jquery@3.7.1"
+    },
+    {
+      "provider": "cdnjs",
+      "library": "bootstrap-tagsinput@0.8.0",
+      "destination": "wwwroot/lib/bootstrap-tagsinput/",
+      "files": [
+        "bootstrap-tagsinput.css",
+        "bootstrap-tagsinput.js"
+      ]
+    },
+    {
+      "destination": "wwwroot/lib/jquery-validation-unobtrusive/",
+      "library": "jquery-validation-unobtrusive@4.0.0",
+      "files": [ "jquery.validate.unobtrusive.min.js" ]
+    },
+    {
+      "destination": "wwwroot/lib/datatables",
+      "library": "datatables.net@2.1.1",
+      "files": [ "jquery.dataTables.min.js" ]
+    },
+    {
+      "destination": "wwwroot/lib/datatables.net-bs/",
+      "library": "datatables.net-bs5@1.13.6",
+      "files": [ "dataTables.bootstrap5.min.css", "dataTables.bootstrap5.min.js" ]
+    },
+    {
+      "destination": "wwwroot/lib/bootstrap/",
+      "library": "bootstrap@5.3.1",
+      "provider": "unpkg",
+      "files": [ "dist/js/bootstrap.min.js", "dist/css/bootstrap.min.css", "dist/js/bootstrap.bundle.min.js" ]
+    }
+  ]
+}

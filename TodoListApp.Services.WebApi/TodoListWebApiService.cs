@@ -13,8 +13,10 @@ namespace TodoListApp.Services.WebApi
         /// </summary>
         public TodoListWebApiService()
         {
-            this.Client = new HttpClient();
-            this.Client.BaseAddress = new Uri("https://localhost:5276/");
+            this.Client = new HttpClient
+            {
+                BaseAddress = new Uri("http://localhost:5276/")
+            };
         }
 
         public List<TodoListDto> GetTodoLists()
