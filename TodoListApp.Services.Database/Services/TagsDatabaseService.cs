@@ -9,13 +9,13 @@ namespace TodoListApp.Services.Database.Services
 {
     public class TagsDatabaseService : ITagService
     {
-        public ITagReposiotry TagReposiotry { get; set; }
+        public ITagRepository TagReposiotry { get; set; }
 
-        public ITodoTaskReposiotry TodoTaskReposiotry { get; set; }
+        public ITodoTaskRepository TodoTaskReposiotry { get; set; }
 
         private IMapper _mapper { get; set; }
 
-        public TagsDatabaseService(ITagReposiotry tagReposiotry, IMapper mapper, ITodoTaskReposiotry todoTaskReposiotry)
+        public TagsDatabaseService(ITagRepository tagReposiotry, IMapper mapper, ITodoTaskRepository todoTaskReposiotry)
         {
             TagReposiotry = tagReposiotry;
             _mapper = mapper;

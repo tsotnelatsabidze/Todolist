@@ -1,6 +1,5 @@
 using System.Net.Http.Json;
 using Newtonsoft.Json;
-using TodoListApp.Services.Models;
 using TodoListApp.WebApi.Models.Models;
 
 namespace TodoListApp.Services.WebApi
@@ -12,49 +11,49 @@ namespace TodoListApp.Services.WebApi
         public TodoTasksWebApiService()
         {
             this.Client = new HttpClient();
-            this.Client.BaseAddress = new Uri("https://localhost:7052/");
+            this.Client.BaseAddress = new Uri("https://localhost:5276/");
         }
 
-        public async Task<IEnumerable<TodoTask>> GetToDoTasksByTag(int tagId)
+        public async Task<IEnumerable<TodoTaskDto>> GetToDoTasksByTag(int tagId)
         {
             var response = Client.GetAsync($"TodoTask?$filter=Tags/any(tag: tag/Id eq {tagId})").Result;
             string content = response.Content.ReadAsStringAsync().Result;
-            return JsonConvert.DeserializeObject<IEnumerable<TodoTask>>(content);
+            return JsonConvert.DeserializeObject<IEnumerable<TodoTaskDto>>(content);
         }
 
-        public async Task<TodoTask> AddNewTaskAsync(TodoTaskCreateDto todoTask)
+        public async Task<TodoTaskDto> AddNewTaskAsync(TodoTaskCreateDto todoTask)
         {
             var response = await Client.PostAsJsonAsync("/TodoTask/", todoTask);
             string content = await response.Content.ReadAsStringAsync();
-            return JsonConvert.DeserializeObject<TodoTask>(content);
+            return JsonConvert.DeserializeObject<TodoTaskDto>(content);
         }
 
-        public IEnumerable<TodoTask> GetToDoTasksByToDoList(int todoListId)
+        public IEnumerable<TodoTaskDto> GetToDoTasksByToDoList(int todoListId)
         {
             var response = Client.GetAsync($"/TodoTask?$filter=todoListId eq {todoListId}").Result;
             string content = response.Content.ReadAsStringAsync().Result;
-            return JsonConvert.DeserializeObject<IEnumerable<TodoTask>>(content);
+            return JsonConvert.DeserializeObject<IEnumerable<TodoTaskDto>>(content);
         }
 
-        public async Task<TodoTask> GetTodoTaskById(int taskId)
+        public async Task<TodoTaskDto> GetTodoTaskById(int taskId)
         {
             var response = await Client.GetAsync($"/TodoTask?$filter=Id eq {taskId}&$expand=Tags,Comments");
             string content = await response.Content.ReadAsStringAsync();
-            return JsonConvert.DeserializeObject<IEnumerable<TodoTask>>(content).FirstOrDefault();
+            return JsonConvert.DeserializeObject<IEnumerable<TodoTaskDto>>(content).FirstOrDefault();
         }
 
-        public List<TodoTask> GetTodoTasks()
+        public List<TodoTaskDto> GetTodoTasks()
         {
             var response = Client.GetAsync("/TodoTask").Result;
             string content = response.Content.ReadAsStringAsync().Result;
-            return JsonConvert.DeserializeObject<List<TodoTask>>(content);
+            return JsonConvert.DeserializeObject<List<TodoTaskDto>>(content);
         }
 
-        public async Task<TodoTask> UpdateTodoTask(int id, TodoTaskUpdateDto todoTaskUpdateDTO)
+        public async Task<TodoTaskDto> UpdateTodoTask(int id, TodoTaskUpdateDto todoTaskUpdateDTO)
         {
             var response = await Client.PutAsJsonAsync($"/TodoTask/{id}", todoTaskUpdateDTO);
             string content = await response.Content.ReadAsStringAsync();
-            return JsonConvert.DeserializeObject<TodoTask>(content);
+            return JsonConvert.DeserializeObject<TodoTaskDto>(content);
         }
 
         public async Task DeleteTodoTask(int id)

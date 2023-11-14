@@ -11,10 +11,10 @@ namespace TodoListApp.Services.WebApi
         public CommentsWebApiService()
         {
             this.Client = new HttpClient();
-            this.Client.BaseAddress = new Uri("https://localhost:7052/");
+            this.Client.BaseAddress = new Uri("https://localhost:5276/");
         }
 
-        public async Task<List<CommentDto>> GetCommentsByTodoTaskId(int todoTaskId)
+        public async Task<List<CommentDto>> GetCommentsByTodoTaskId()
         {
             var response = await Client.GetAsync("/Comment");
             string content = await response.Content.ReadAsStringAsync();

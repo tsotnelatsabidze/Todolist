@@ -23,27 +23,27 @@ namespace TodoListApp.WebApi.Controllers
         [HttpPost(Name = "CreateTag")]
         public ActionResult<TagDto> CreateTag(int todoTaskId, string tag)
         {
-            return Ok(TagService.CreateTag(todoTaskId, tag));
+            return this.Ok(this.TagService.CreateTag(todoTaskId, tag));
         }
 
         [HttpGet("{Id}", Name = "GetTagById")]
         public ActionResult<TagDto> GetTagById(int Id)
         {
-            return Ok(Mapper.Map<TagDto>(TagService.GetTag(Id)));
+            return this.Ok(this.Mapper.Map<TagDto>(this.TagService.GetTag(Id)));
         }
 
         [HttpGet]
         [EnableQuery]
         public IActionResult GetAllTodoTasks()
         {
-            return Ok(TagService.GetAll());
+            return this.Ok(this.TagService.GetAll());
         }
 
         [HttpDelete]
         public IActionResult DeleteTagFromTodoTask(int todoTaskId, string tag)
         {
             this.TagService.DeleteTagFromTodoTask(todoTaskId, tag);
-            return NoContent();
+            return this.NoContent();
         }
     }
 }

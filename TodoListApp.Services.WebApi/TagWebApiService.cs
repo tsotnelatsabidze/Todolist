@@ -10,7 +10,7 @@ namespace TodoListApp.Services.WebApi
         public TagWebApiService()
         {
             this.Client = new HttpClient();
-            this.Client.BaseAddress = new Uri("https://localhost:7052/");
+            this.Client.BaseAddress = new Uri("https://localhost:5276/");
         }
 
         public async Task<IEnumerable<TagDto>> GetAllTags()

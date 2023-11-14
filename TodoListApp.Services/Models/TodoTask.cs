@@ -16,7 +16,7 @@ namespace TodoListApp.Services.Models
 
         public TodoTaskStatus Status { get; set; }
 
-        public string CreatorUserId { get; set; }
+        public string? CreatorUserId { get; set; }
 
         public string AssignedUserId { get; set; }
 

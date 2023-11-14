@@ -29,9 +29,9 @@ builder.Services.AddScoped<ITodoTaskService, TodoTaskDatabaseService>();
 builder.Services.AddScoped<ICommentsService, CommentsDatabaseServcie>();
 builder.Services.AddScoped<ITagService, TagsDatabaseService>();
 builder.Services.AddScoped<ITodoListRepository, TodoListRepository>();
-builder.Services.AddScoped<ITodoTaskReposiotry, TodoTaskReposiotry>();
+builder.Services.AddScoped<ITodoTaskRepository, TodoTaskReposiotry>();
 builder.Services.AddScoped<ICommentRepository, CommentRepository>();
-builder.Services.AddScoped<ITagReposiotry, TagReposiotry>();
+builder.Services.AddScoped<ITagRepository, TagReposiotry>();
 
 builder.Services.AddAutoMapper(typeof(TagEntityProfile));
 builder.Services.AddAutoMapper(typeof(CommentEntityProfile));

@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using TodoListApp.Services.WebApi;
 using TodoListApp.WebApi.Models.Models;
 using TodoListApp.WebApp.Extensions;
-using TodoTask = TodoListApp.WebApi.Models.Models.TodoTaskDto;
 
 
 namespace TodoListApp.WebApp.Controllers
@@ -49,16 +48,16 @@ namespace TodoListApp.WebApp.Controllers
         public async Task<IActionResult> Edit(int id, TodoTaskUpdateDto updatedTask)
         {
             // Validate and update the task in your repository
-            if (this.ModelState.IsValid)
+            if (ModelState.IsValid)
             {
-                var todoInDb = await this.TodoTasksWebApiService.GetTodoTaskById(id);
+                var todoInDb = await TodoTasksWebApiService.GetTodoTaskById(id);
                 updatedTask.Tags = todoInDb.Tags;
-                _ = await this.TodoTasksWebApiService.UpdateTodoTask(id, updatedTask);
-                return this.RedirectToAction("TodoTasks", "TodoList", new { id = updatedTask.TodoListId }); // Redirect to the Todo List view
+                await TodoTasksWebApiService.UpdateTodoTask(id, updatedTask);
+                return RedirectToAction("TodoTasks", "TodoList", new { id = updatedTask.TodoListId }); // Redirect to the Todo List view
             }
 
             // If validation fails, redisplay the edit view with validation errors
-            return this.View("Index", updatedTask);
+            return View("Index", updatedTask);
         }
 
         public async Task<ActionResult> Delete(int id)
@@ -76,7 +75,7 @@ namespace TodoListApp.WebApp.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Delete(TodoTask todoTask)
+        public async Task<IActionResult> Delete(TodoTaskDto todoTask)
         {
             await this.TodoTasksWebApiService.DeleteTodoTask(todoTask.Id);
             return this.RedirectToAction("TodoTasks", "TodoList", new { id = todoTask.TodoListId });

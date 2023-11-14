@@ -1,6 +1,6 @@
 namespace TodoListApp.WebApi.Models.Models
 {
-    public class TagCreateDTO
+    public class TagCreateDto
     {
         public string? Name { get; set; }
 

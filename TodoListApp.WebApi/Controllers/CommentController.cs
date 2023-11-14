@@ -41,9 +41,9 @@ namespace TodoListApp.WebApi.Controllers
         }
 
         [HttpPost(Name = "CreateComment")]
-        public ActionResult<CommentDto> CreateComment(CommentDto commentDTO)
+        public ActionResult<CommentDto> CreateComment(CommentDto commentDto)
         {
-            var newComment = CommentsServcie.CreateComment(Mapper.Map<Comment>(commentDTO));
+            var newComment = CommentsServcie.CreateComment(Mapper.Map<Comment>(commentDto));
             return Ok(Mapper.Map<CommentDto>(newComment));
         }
 
