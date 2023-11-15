@@ -1,67 +1,47 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
 namespace TodoListApp.Services.Database.Migrations
 {
-    public partial class tags : Migration
+    public partial class Tags : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "Comment",
-                table: "Comments");
+            _ = migrationBuilder.DropColumn(name: "Comment", table: "Comments");
 
-            migrationBuilder.DropColumn(
-                name: "CreatorId",
-                table: "Comments");
+            _ = migrationBuilder.DropColumn(name: "CreatorId", table: "Comments");
 
-            migrationBuilder.RenameColumn(
-                name: "CreatDate",
-                table: "Comments",
-                newName: "CreateDate");
+            _ = migrationBuilder.RenameColumn(name: "CreatDate", table: "Comments", newName: "CreateDate");
 
-            migrationBuilder.AddColumn<string>(
-                name: "Creator",
-                table: "Comments",
-                type: "nvarchar(max)",
-                nullable: true);
+            _ = migrationBuilder.AddColumn<string>(name: "Creator", table: "Comments", type: "nvarchar(max)", nullable: true);
 
-            migrationBuilder.AddColumn<string>(
-                name: "Text",
-                table: "Comments",
-                type: "nvarchar(max)",
-                nullable: true);
+            _ = migrationBuilder.AddColumn<string>(name: "Text", table: "Comments", type: "nvarchar(max)", nullable: true);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
+            _ = migrationBuilder.DropColumn(
                 name: "Creator",
                 table: "Comments");
 
-            migrationBuilder.DropColumn(
-                name: "Text",
-                table: "Comments");
+            _ = migrationBuilder.DropColumn(name: "Text", table: "Comments");
 
-            migrationBuilder.RenameColumn(
-                name: "CreateDate",
-                table: "Comments",
-                newName: "CreatDate");
+            _ = migrationBuilder.RenameColumn(name: "CreateDate", table: "Comments", newName: "CreatDate");
 
-            migrationBuilder.AddColumn<string>(
+            _ = migrationBuilder.AddColumn<string>(
                 name: "Comment",
                 table: "Comments",
                 type: "nvarchar(max)",
                 nullable: false,
-                defaultValue: "");
+                defaultValue: string.Empty);
 
-            migrationBuilder.AddColumn<string>(
+            _ = migrationBuilder.AddColumn<string>(
                 name: "CreatorId",
                 table: "Comments",
                 type: "nvarchar(max)",
                 nullable: false,
-                defaultValue: "");
+                defaultValue: string.Empty);
         }
     }
 }

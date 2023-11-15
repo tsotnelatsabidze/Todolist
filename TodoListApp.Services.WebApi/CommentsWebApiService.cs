@@ -6,31 +6,35 @@ namespace TodoListApp.Services.WebApi
 {
     public class CommentsWebApiService
     {
-        public HttpClient Client { get; set; }
-
         public CommentsWebApiService()
         {
-            this.Client = new HttpClient();
-            this.Client.BaseAddress = new Uri("http://localhost:5276/");
+#pragma warning disable S1075 // URIs should not be hardcoded
+            this.Client = new HttpClient
+            {
+                BaseAddress = new Uri("http://localhost:5276/"),
+            };
+#pragma warning restore S1075 // URIs should not be hardcoded
         }
+
+        public HttpClient Client { get; set; }
 
         public async Task<List<CommentDto>> GetCommentsByTodoTaskId()
         {
-            var response = await Client.GetAsync("/Comment");
+            var response = await this.Client.GetAsync("/Comment");
             string content = await response.Content.ReadAsStringAsync();
             return JsonConvert.DeserializeObject<List<CommentDto>>(content);
         }
 
         public async Task<CommentDto> CreateNewComment(CommentDto comment)
         {
-            var response = await Client.PostAsJsonAsync("/Comment", comment);
+            var response = await this.Client.PostAsJsonAsync("/Comment", comment);
             string content = await response.Content.ReadAsStringAsync();
             return JsonConvert.DeserializeObject<CommentDto>(content);
         }
 
         public async Task DeleteComment(int commentId)
         {
-            await this.Client.DeleteAsync($"/Comment/{commentId}");
+            _ = await this.Client.DeleteAsync($"/Comment/{commentId}");
         }
     }
 }

@@ -20,7 +20,9 @@ namespace TodoListApp.Services.Database.Repositories
 
         public TEntity GetById(object id)
         {
+#pragma warning disable CS8603 // Possible null reference return.
             return this.dbContext.Set<TEntity>().Find(id);
+#pragma warning restore CS8603 // Possible null reference return.
         }
 
         public void Insert(TEntity entity)
@@ -37,8 +39,13 @@ namespace TodoListApp.Services.Database.Repositories
 
         public void Delete(object id)
         {
+#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
             TEntity entityToDelete = this.dbContext.Set<TEntity>().Find(id);
-            this.Delete(entityToDelete);
+#pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
+            if (entityToDelete != null)
+            {
+                this.Delete(entityToDelete);
+            }
         }
 
         public void Delete(TEntity entity)

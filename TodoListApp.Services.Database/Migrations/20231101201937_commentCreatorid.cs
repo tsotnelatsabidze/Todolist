@@ -1,14 +1,14 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
 namespace TodoListApp.Services.Database.Migrations
 {
-    public partial class commentCreatorid : Migration
+    public partial class CommentCreatorid : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AlterColumn<string>(
+            _ = migrationBuilder.AlterColumn<string>(
                 name: "CreatorId",
                 table: "Comments",
                 type: "nvarchar(max)",
@@ -19,7 +19,7 @@ namespace TodoListApp.Services.Database.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AlterColumn<int>(
+            _ = migrationBuilder.AlterColumn<int>(
                 name: "CreatorId",
                 table: "Comments",
                 type: "int",

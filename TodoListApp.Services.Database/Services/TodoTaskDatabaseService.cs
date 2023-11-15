@@ -28,7 +28,7 @@ namespace TodoListApp.Services.Database.Services
                 TodoListId = todoTask.TodoListId,
             });
 
-            this.context.SaveChanges();
+            _ = this.context.SaveChanges();
 
             return new TodoTask()
             {
@@ -50,8 +50,8 @@ namespace TodoListApp.Services.Database.Services
 
             if (todoTask != null)
             {
-                this.context.TodoTasks.Remove(todoTask);
-                this.context.SaveChanges();
+                _ = this.context.TodoTasks.Remove(todoTask);
+                _ = this.context.SaveChanges();
             }
         }
 
@@ -74,6 +74,7 @@ namespace TodoListApp.Services.Database.Services
         public TodoTask GetTodoTask(int todoTaskId)
         {
             var todoTask = this.context.TodoTasks.FirstOrDefault(x => x.Id == todoTaskId);
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
             return new TodoTask()
             {
                 Id = todoTask.Id,
@@ -84,8 +85,9 @@ namespace TodoListApp.Services.Database.Services
                 CreatorUserId = todoTask.CreatorUserId,
                 CreateDate = todoTask.CreateDate,
                 DueDate = todoTask.DueDate,
-                TodoListId = todoTask.TodoListId
+                TodoListId = todoTask.TodoListId,
             };
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
         }
 
         public List<TodoTask> GetTodoTasksByTodoList(int todoListId)
@@ -111,7 +113,7 @@ namespace TodoListApp.Services.Database.Services
             var todoTaskEntity = this.context.TodoTasks.Include(x => x.Tags).FirstOrDefault(x => x.Id == id);
             if (todoTaskEntity == null)
             {
-                throw new ArgumentNullException("TodoTask not found");
+                throw new ArgumentNullException(nameof(id), "TodoTask not found");
             }
 
             todoTaskEntity.Title = todoTask.Title;
@@ -121,6 +123,8 @@ namespace TodoListApp.Services.Database.Services
             todoTaskEntity.AssignedUserId = todoTask.AssignedUserId;
 
             todoTaskEntity.Tags = new List<TagEntity>();
+#pragma warning disable S3267 // Loops should be simplified with "LINQ" expressions
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
             foreach (var tag in todoTask.Tags)
             {
                 var tagEntity = this.context.Tags.FirstOrDefault(x => x.Name == tag.Name);
@@ -131,10 +135,13 @@ namespace TodoListApp.Services.Database.Services
                         Name = tag.Name,
                     };
                 }
+
                 todoTaskEntity.Tags.Add(tagEntity);
             }
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
+#pragma warning restore S3267 // Loops should be simplified with "LINQ" expressions
 
-            this.context.SaveChanges();
+            _ = this.context.SaveChanges();
 
             return new TodoTask()
             {
@@ -147,7 +154,7 @@ namespace TodoListApp.Services.Database.Services
                 CreateDate = todoTaskEntity.CreateDate,
                 DueDate = todoTaskEntity.DueDate,
                 TodoListId = todoTaskEntity.TodoListId,
-                Tags = todoTaskEntity.Tags.Select(x => new Tag() { Id = x.Id, Name = x.Name })
+                Tags = todoTaskEntity.Tags.Select(x => new Tag() { Id = x.Id, Name = x.Name }),
             };
         }
     }

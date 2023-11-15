@@ -13,7 +13,7 @@ namespace TodoListApp.Services.Database.Migrations
 {
     [DbContext(typeof(TodoListDbContext))]
     [Migration("20231101195358_initial")]
-    partial class initial
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

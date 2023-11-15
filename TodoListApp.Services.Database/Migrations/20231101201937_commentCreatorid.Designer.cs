@@ -13,7 +13,7 @@ namespace TodoListApp.Services.Database.Migrations
 {
     [DbContext(typeof(TodoListDbContext))]
     [Migration("20231101201937_commentCreatorid")]
-    partial class commentCreatorid
+    partial class CommentCreatorid
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

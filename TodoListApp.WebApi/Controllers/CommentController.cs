@@ -11,20 +11,20 @@ namespace TodoListApp.WebApi.Controllers
     [Route("[controller]")]
     public class CommentController : ControllerBase
     {
+        public CommentController(ICommentsService commentsServcie, IMapper mapper)
+        {
+            this.CommentsServcie = commentsServcie;
+            this.Mapper = mapper;
+        }
+
         public ICommentsService CommentsServcie { get; set; }
 
         public IMapper Mapper { get; set; }
 
-        public CommentController(ICommentsService commentsServcie, IMapper mapper)
-        {
-            CommentsServcie = commentsServcie;
-            Mapper = mapper;
-        }
-
         [HttpGet("{Id}", Name = "GetCommentById")]
-        public ActionResult<CommentDto> GetCommentById(int Id)
+        public ActionResult<CommentDto> GetCommentById(int id)
         {
-            var comment = this.CommentsServcie.GetCommentById(Id);
+            var comment = this.CommentsServcie.GetCommentById(id);
             if (comment == null)
             {
                 return this.NotFound();
@@ -37,22 +37,22 @@ namespace TodoListApp.WebApi.Controllers
         [EnableQuery]
         public IActionResult GetAllComments()
         {
-            return Ok(CommentsServcie.GetAll());
+            return this.Ok(this.CommentsServcie.GetAll());
         }
 
         [HttpPost(Name = "CreateComment")]
         public ActionResult<CommentDto> CreateComment(CommentDto commentDto)
         {
-            var newComment = CommentsServcie.CreateComment(Mapper.Map<Comment>(commentDto));
-            return Ok(Mapper.Map<CommentDto>(newComment));
+            var newComment = this.CommentsServcie.CreateComment(this.Mapper.Map<Comment>(commentDto));
+            return this.Ok(this.Mapper.Map<CommentDto>(newComment));
         }
 
         [HttpDelete("{Id}", Name = "DeleteComment")]
-        public IActionResult DeleteComment(int Id)
+        public IActionResult DeleteComment(int id)
         {
-            CommentsServcie.DeleteComment(Id);
+            this.CommentsServcie.DeleteComment(id);
 
-            return Ok();
+            return this.Ok();
         }
     }
 }

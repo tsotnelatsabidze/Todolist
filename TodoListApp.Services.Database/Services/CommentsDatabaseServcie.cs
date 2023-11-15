@@ -9,16 +9,15 @@ namespace TodoListApp.Services.Database.Services
 {
     public class CommentsDatabaseServcie : ICommentsService
     {
-        private ICommentRepository CommentRepository { get; set; }
-
-        private IMapper Mapper { get; set; }
-
         public CommentsDatabaseServcie(ICommentRepository commentRepository, IMapper mapper)
         {
             this.CommentRepository = commentRepository;
             this.Mapper = mapper;
         }
 
+        private ICommentRepository CommentRepository { get; set; }
+
+        private IMapper Mapper { get; set; }
 
         /// <inheritdoc/>
         public Comment CreateComment(Comment comment)

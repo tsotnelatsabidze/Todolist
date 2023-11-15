@@ -9,82 +9,92 @@ namespace TodoListApp.Services.Database.Services
 {
     public class TagsDatabaseService : ITagService
     {
-        public ITagRepository TagReposiotry { get; set; }
+        public TagsDatabaseService(ITagRepository tagRepository, IMapper mapper, ITodoTaskRepository todoTaskRepository)
+        {
+            this.TagRepository = tagRepository;
+            this.Mapper = mapper;
+            this.TodoTaskReposiotry = todoTaskRepository;
+        }
+
+        public ITagRepository TagRepository { get; set; }
 
         public ITodoTaskRepository TodoTaskReposiotry { get; set; }
 
-        private IMapper _mapper { get; set; }
-
-        public TagsDatabaseService(ITagRepository tagReposiotry, IMapper mapper, ITodoTaskRepository todoTaskReposiotry)
-        {
-            TagReposiotry = tagReposiotry;
-            _mapper = mapper;
-            TodoTaskReposiotry = todoTaskReposiotry;
-        }
+        private IMapper Mapper { get; set; }
 
         public Tag CreateTag(int todoTaskId, string tag)
         {
-            var tagEntity = TagReposiotry.GetAll().Where(x => x.Name == tag).Include(x => x.TodoTasks).FirstOrDefault();
-            var todoTaskEntity = TodoTaskReposiotry.GetAll().Where(x => x.Id == todoTaskId).Include(x => x.Tags).FirstOrDefault();
+            var tagEntity = this.TagRepository.GetAll().Where(x => x.Name == tag).Include(x => x.TodoTasks).FirstOrDefault();
+            var todoTaskEntity = this.TodoTaskReposiotry.GetAll().Where(x => x.Id == todoTaskId).Include(x => x.Tags).FirstOrDefault();
 
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+#pragma warning disable S2259 // Null pointers should not be dereferenced
             if (tagEntity == null)
             {
+#pragma warning disable CS8604 // Possible null reference argument.
                 tagEntity = new Entities.TagEntity()
                 {
                     Name = tag,
-                    TodoTasks = new List<Entities.TodoTaskEntity>() { todoTaskEntity }
+                    TodoTasks = new List<Entities.TodoTaskEntity>() { todoTaskEntity },
                 };
+#pragma warning restore CS8604 // Possible null reference argument.
             }
-            else if (todoTaskEntity.Tags.Any(x => x.Name == tag))
+            else if (todoTaskEntity.Tags != null && todoTaskEntity.Tags.Any(x => x.Name == tag))
             {
-                return _mapper.Map<Tag>(todoTaskEntity.Tags.FirstOrDefault(x => x.Name == tag));
+                return this.Mapper.Map<Tag>(todoTaskEntity.Tags.FirstOrDefault(x => x.Name == tag));
             }
             else
             {
                 tagEntity.TodoTasks.Add(todoTaskEntity);
             }
+#pragma warning restore S2259 // Null pointers should not be dereferenced
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
 
-            TagReposiotry.Insert(tagEntity);
+            this.TagRepository.Insert(tagEntity);
 
-            return _mapper.Map<Tag>(tagEntity);
+            return this.Mapper.Map<Tag>(tagEntity);
         }
 
         public Tag GetTag(int id)
         {
-            var tagEntity = TagReposiotry.GetById(id);
-            return _mapper.Map<Tag>(tagEntity);
+            var tagEntity = this.TagRepository.GetById(id);
+            return this.Mapper.Map<Tag>(tagEntity);
         }
 
         public void DeleteTag(string name)
         {
-            var tagEntity = TagReposiotry.GetAll().FirstOrDefault(x => x.Name == name);
+            var tagEntity = this.TagRepository.GetAll().FirstOrDefault(x => x.Name == name);
             if (tagEntity == null)
             {
-                throw new Exception("Tag not found");
+                throw new InvalidOperationException("Tag not found");
             }
             else
             {
-                TagReposiotry.Delete(tagEntity);
+                this.TagRepository.Delete(tagEntity);
             }
         }
 
         public void DeleteTagFromTodoTask(int todoTaskId, string name)
         {
-            var todoTask = TodoTaskReposiotry.GetAll().Where(x => x.Id == todoTaskId).Include(x => x.Tags).FirstOrDefault();
+            var todoTask = this.TodoTaskReposiotry.GetAll().Where(x => x.Id == todoTaskId).Include(x => x.Tags).FirstOrDefault();
             if (todoTask == null)
             {
-                throw new Exception("todoTask not found");
+                throw new ArgumentException("TodoTask not found");
             }
             else
             {
-                todoTask.Tags = todoTask.Tags.Where(x => x.Name != name).ToList();
-                TodoTaskReposiotry.Update(todoTask);
+                if (todoTask.Tags != null)
+                {
+                    todoTask.Tags = todoTask.Tags.Where(x => x.Name != name).ToList();
+                }
+
+                this.TodoTaskReposiotry.Update(todoTask);
             }
         }
 
         public IQueryable<Tag> GetAll()
         {
-            return this.TagReposiotry.GetAll().ProjectTo<Tag>(_mapper.ConfigurationProvider);
+            return this.TagRepository.GetAll().ProjectTo<Tag>(this.Mapper.ConfigurationProvider);
         }
     }
 }

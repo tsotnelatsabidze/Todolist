@@ -13,7 +13,7 @@ namespace TodoListApp.Services.Database.Migrations
 {
     [DbContext(typeof(TodoListDbContext))]
     [Migration("20231114170123_tags")]
-    partial class tags
+    partial class Tags
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

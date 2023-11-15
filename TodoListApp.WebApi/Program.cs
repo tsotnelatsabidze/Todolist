@@ -11,7 +11,6 @@ using TodoListApp.WebApi.Profiles;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
 builder.Services.AddControllers();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -31,8 +30,7 @@ builder.Services.AddScoped<ITagService, TagsDatabaseService>();
 builder.Services.AddScoped<ITodoListRepository, TodoListRepository>();
 builder.Services.AddScoped<ITodoTaskRepository, TodoTaskReposiotry>();
 builder.Services.AddScoped<ICommentRepository, CommentRepository>();
-builder.Services.AddScoped<ITagRepository, TagReposiotry>();
-
+builder.Services.AddScoped<ITagRepository, TagRepository>();
 builder.Services.AddAutoMapper(typeof(TagEntityProfile));
 builder.Services.AddAutoMapper(typeof(CommentEntityProfile));
 builder.Services.AddAutoMapper(typeof(TodoListCreateProfile));

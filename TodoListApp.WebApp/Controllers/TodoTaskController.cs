@@ -19,9 +19,9 @@ namespace TodoListApp.WebApp.Controllers
         public TodoTaskController(TodoListWebApiService todoListWebApiService, CommentsWebApiService commentsWebApiService, TodoTasksWebApiService todoTasksWebApiService, TagWebApiService tagWebApiService)
         {
             this.TodoListWebApiService = todoListWebApiService;
-            CommentsWebApiService = commentsWebApiService;
-            TodoTasksWebApiService = todoTasksWebApiService;
-            TagWebApiService = tagWebApiService;
+            this.CommentsWebApiService = commentsWebApiService;
+            this.TodoTasksWebApiService = todoTasksWebApiService;
+            this.TagWebApiService = tagWebApiService;
         }
 
         public IActionResult Index(int todoListId)
@@ -48,22 +48,21 @@ namespace TodoListApp.WebApp.Controllers
         public async Task<IActionResult> Edit(int id, TodoTaskUpdateDto updatedTask)
         {
             // Validate and update the task in your repository
-            if (ModelState.IsValid)
+            if (this.ModelState.IsValid)
             {
-                var todoInDb = await TodoTasksWebApiService.GetTodoTaskById(id);
+                var todoInDb = await this.TodoTasksWebApiService.GetTodoTaskById(id);
                 updatedTask.Tags = todoInDb.Tags;
-                await TodoTasksWebApiService.UpdateTodoTask(id, updatedTask);
-                return RedirectToAction("TodoTasks", "TodoList", new { id = updatedTask.TodoListId }); // Redirect to the Todo List view
+                _ = await this.TodoTasksWebApiService.UpdateTodoTask(id, updatedTask);
+                return this.RedirectToAction("TodoTasks", "TodoList", new { id = updatedTask.TodoListId }); // Redirect to the Todos List view
             }
 
             // If validation fails, redisplay the edit view with validation errors
-            return View("Index", updatedTask);
+            return this.View("Index", updatedTask);
         }
 
-        public async Task<ActionResult> Delete(int id)
+        private async Task<ActionResult> GetTodoTaskOrRedirect(int id)
         {
             var response = await this.TodoTasksWebApiService.GetTodoTaskById(id);
-
             if (response is not null)
             {
                 return this.View(response);
@@ -73,6 +72,18 @@ namespace TodoListApp.WebApp.Controllers
                 return this.RedirectToAction("Index");
             }
         }
+
+        [HttpGet]
+        public async Task<ActionResult> Details(int id)
+        {
+            return await this.GetTodoTaskOrRedirect(id);
+        }
+
+        public async Task<ActionResult> Delete(int id)
+        {
+            return await this.GetTodoTaskOrRedirect(id);
+        }
+
 
         [HttpPost]
         public async Task<IActionResult> Delete(TodoTaskDto todoTask)
@@ -92,8 +103,8 @@ namespace TodoListApp.WebApp.Controllers
         {
             try
             {
-                todoTask.CreatorUserId = User.GetUserId();
-                await this.TodoTasksWebApiService.AddNewTaskAsync(todoTask);
+                todoTask.CreatorUserId = this.User.GetUserId();
+                _ = await this.TodoTasksWebApiService.AddNewTaskAsync(todoTask);
                 return this.RedirectToAction("TodoTasks", "TodoList", new { id = todoTask.TodoListId });
             }
             catch (HttpRequestException ex)
@@ -104,43 +115,25 @@ namespace TodoListApp.WebApp.Controllers
             }
         }
 
-        [HttpGet]
-        public async Task<ActionResult> Details(int id)
-        {
-            var response = await this.TodoTasksWebApiService.GetTodoTaskById(id);
-            if (response is not null)
-            {
-                return this.View(response);
-            }
-            else
-            {
-                return this.RedirectToAction("Index");
-            }
-        }
-
         [HttpPost]
         public async Task AddTag(int todoTaskId, string tag)
         {
-            //var todoTask = await TodoTasksWebApiService.GetTodoTaskById(todoTaskId);
-            //if (todoTask.Tags.Any(t => t.Name == tag))
-            //    return;
-
-            await TagWebApiService.AddTagToTodoTask(todoTaskId, tag);
+            await this.TagWebApiService.AddTagToTodoTask(todoTaskId, tag);
         }
 
         [HttpPost]
         public async Task RemoveTag(int todoTaskId, string tag)
         {
-            await TagWebApiService.RemoveTagFromTodoTask(todoTaskId, tag);
+            await this.TagWebApiService.RemoveTagFromTodoTask(todoTaskId, tag);
         }
 
         [HttpPost]
         public async Task<CommentDto> AddComment(int todoTaskId, string comment)
         {
-            var newComment = await CommentsWebApiService.CreateNewComment(new CommentDto()
+            var newComment = await this.CommentsWebApiService.CreateNewComment(new CommentDto()
             {
                 CreateDate = DateTime.Now,
-                Creator = User.GetUserId(),
+                Creator = this.User.GetUserId(),
                 Text = comment,
                 TodoTaskId = todoTaskId
             });
@@ -152,13 +145,13 @@ namespace TodoListApp.WebApp.Controllers
         [HttpPost]
         public async Task RemoveComment(int commentId)
         {
-            await CommentsWebApiService.DeleteComment(commentId);
+            await this.CommentsWebApiService.DeleteComment(commentId);
         }
 
         [HttpGet]
-        public async Task<IActionResult> TodoTasksByTag(int tagId)
+        public IActionResult TodoTasksByTag(int tagId)
         {
-            var tasks = await this.TodoTasksWebApiService.GetToDoTasksByTag(tagId);
+            var tasks = this.TodoTasksWebApiService.GetToDoTasksByTag(tagId);
             return this.View("TodoTasks", tasks);
         }
     }

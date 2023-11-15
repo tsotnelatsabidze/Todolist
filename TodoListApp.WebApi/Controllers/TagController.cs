@@ -10,15 +10,15 @@ namespace TodoListApp.WebApi.Controllers
     [Route("[controller]")]
     public class TagController : ControllerBase
     {
-        public ITagService TagService { get; set; }
-
-        public IMapper Mapper { get; set; }
-
         public TagController(ITagService tagService, IMapper mapper)
         {
             this.TagService = tagService;
             this.Mapper = mapper;
         }
+
+        public ITagService TagService { get; set; }
+
+        public IMapper Mapper { get; set; }
 
         [HttpPost(Name = "CreateTag")]
         public ActionResult<TagDto> CreateTag(int todoTaskId, string tag)
@@ -27,9 +27,9 @@ namespace TodoListApp.WebApi.Controllers
         }
 
         [HttpGet("{Id}", Name = "GetTagById")]
-        public ActionResult<TagDto> GetTagById(int Id)
+        public ActionResult<TagDto> GetTagById(int id)
         {
-            return this.Ok(this.Mapper.Map<TagDto>(this.TagService.GetTag(Id)));
+            return this.Ok(this.Mapper.Map<TagDto>(this.TagService.GetTag(id)));
         }
 
         [HttpGet]

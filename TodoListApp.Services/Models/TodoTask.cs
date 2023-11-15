@@ -6,9 +6,9 @@ namespace TodoListApp.Services.Models
     {
         public int Id { get; set; }
 
-        public string Title { get; set; }
+        public string? Title { get; set; }
 
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         public DateTime CreateDate { get; set; }
 
@@ -18,10 +18,10 @@ namespace TodoListApp.Services.Models
 
         public string? CreatorUserId { get; set; }
 
-        public string AssignedUserId { get; set; }
+        public string? AssignedUserId { get; set; }
 
         public int TodoListId { get; set; }
 
-        public IEnumerable<Tag> Tags { get; set; }
+        public IEnumerable<Tag>? Tags { get; set; }
     }
 }
