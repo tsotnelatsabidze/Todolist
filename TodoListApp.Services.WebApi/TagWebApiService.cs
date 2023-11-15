@@ -5,11 +5,11 @@ namespace TodoListApp.Services.WebApi
 {
     public class TagWebApiService
     {
-        public TagWebApiService()
+        public TagWebApiService(string baseUrl)
         {
             this.Client = new HttpClient
             {
-                BaseAddress = new Uri("http://localhost:5276/"),
+                BaseAddress = new Uri(baseUrl),
             };
         }
 

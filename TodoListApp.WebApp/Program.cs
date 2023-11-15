@@ -15,10 +15,10 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
 
-builder.Services.AddSingleton(new TodoListWebApiService());
-builder.Services.AddSingleton(new TodoTasksWebApiService());
-builder.Services.AddSingleton(new CommentsWebApiService());
-builder.Services.AddSingleton(new TagWebApiService());
+builder.Services.AddSingleton(new TodoListWebApiService(builder.Configuration.GetSection("API")["BaseUrl"]));
+builder.Services.AddSingleton(new TodoTasksWebApiService(builder.Configuration.GetSection("API")["BaseUrl"]));
+builder.Services.AddSingleton(new CommentsWebApiService(builder.Configuration.GetSection("API")["BaseUrl"]));
+builder.Services.AddSingleton(new TagWebApiService(builder.Configuration.GetSection("API")["BaseUrl"]));
 
 var app = builder.Build();
 

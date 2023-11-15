@@ -9,11 +9,11 @@ namespace TodoListApp.Services.WebApi
         /// <summary>
         /// Initializes a new instance of the <see cref="TodoListWebApiService"/> class.
         /// </summary>
-        public TodoListWebApiService()
+        public TodoListWebApiService(string baseUrl)
         {
             this.Client = new HttpClient
             {
-                BaseAddress = new Uri("http://localhost:5276/"),
+                BaseAddress = new Uri(baseUrl),
             };
         }
 

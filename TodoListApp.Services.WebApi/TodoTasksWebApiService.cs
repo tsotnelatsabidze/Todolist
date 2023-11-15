@@ -6,11 +6,11 @@ namespace TodoListApp.Services.WebApi
 {
     public class TodoTasksWebApiService
     {
-        public TodoTasksWebApiService()
+        public TodoTasksWebApiService(string baseUrl)
         {
             this.Client = new HttpClient
             {
-                BaseAddress = new Uri("http://localhost:5276/"),
+                BaseAddress = new Uri(baseUrl),
             };
         }
 
@@ -43,12 +43,7 @@ namespace TodoListApp.Services.WebApi
             string content = await response.Content.ReadAsStringAsync();
             var todoTask = JsonConvert.DeserializeObject<IEnumerable<TodoTaskDto>>(content).FirstOrDefault();
 
-            if (todoTask == null)
-            {
-                throw new KeyNotFoundException($"TodoTask with id {taskId} not found");
-            }
-
-            return todoTask;
+            return todoTask ?? throw new KeyNotFoundException($"TodoTask with id {taskId} not found");
         }
 
         public List<TodoTaskDto> GetTodoTasks()

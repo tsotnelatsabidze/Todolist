@@ -6,11 +6,11 @@ namespace TodoListApp.Services.WebApi
 {
     public class CommentsWebApiService
     {
-        public CommentsWebApiService()
+        public CommentsWebApiService(string baseUrl)
         {
             this.Client = new HttpClient
             {
-                BaseAddress = new Uri("http://localhost:5276/"),
+                BaseAddress = new Uri(baseUrl),
             };
         }
 
