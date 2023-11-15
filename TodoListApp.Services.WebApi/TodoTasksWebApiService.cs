@@ -8,12 +8,10 @@ namespace TodoListApp.Services.WebApi
     {
         public TodoTasksWebApiService()
         {
-#pragma warning disable S1075 // URIs should not be hardcoded
             this.Client = new HttpClient
             {
                 BaseAddress = new Uri("http://localhost:5276/"),
             };
-#pragma warning restore S1075 // URIs should not be hardcoded
         }
 
         public HttpClient Client { get; set; }
@@ -43,9 +41,7 @@ namespace TodoListApp.Services.WebApi
         {
             var response = await this.Client.GetAsync($"/TodoTask?$filter=Id eq {taskId}&$expand=Tags,Comments");
             string content = await response.Content.ReadAsStringAsync();
-#pragma warning disable CS8603 // Possible null reference return.
             return JsonConvert.DeserializeObject<IEnumerable<TodoTaskDto>>(content).FirstOrDefault();
-#pragma warning restore CS8603 // Possible null reference return.
         }
 
         public List<TodoTaskDto> GetTodoTasks()

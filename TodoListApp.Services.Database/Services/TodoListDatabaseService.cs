@@ -40,7 +40,7 @@ namespace TodoListApp.Services.Database.Services
             var todoList = this.dbContext.TodoLists.FirstOrDefault(x => x.Id == id);
             if (todoList == null)
             {
-                throw new ArgumentNullException("TodoList not found");
+                throw new ArgumentNullException(nameof(id), "TodoList not found");
             }
 
             _ = this.dbContext.TodoLists.Remove(todoList);
@@ -71,7 +71,7 @@ namespace TodoListApp.Services.Database.Services
             var todoListEntity = this.dbContext.TodoLists.FirstOrDefault(x => x.Id == todoListId);
             if (todoListEntity == null)
             {
-                throw new ArgumentNullException("TodoList not found");
+                throw new ArgumentNullException(nameof(todoListId), "TodoList not found");
             }
 
             return new TodoList()
@@ -87,7 +87,7 @@ namespace TodoListApp.Services.Database.Services
             var todoListEntity = this.dbContext.TodoLists.FirstOrDefault(x => x.Id == id);
             if (todoListEntity == null)
             {
-                throw new ArgumentNullException("TodoList not found");
+                throw new ArgumentNullException(nameof(id), "TodoList not found");
             }
 
             todoListEntity.Name = todoList.Name;

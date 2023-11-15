@@ -27,17 +27,13 @@ namespace TodoListApp.Services.Database.Services
             var tagEntity = this.TagRepository.GetAll().Where(x => x.Name == tag).Include(x => x.TodoTasks).FirstOrDefault();
             var todoTaskEntity = this.TodoTaskReposiotry.GetAll().Where(x => x.Id == todoTaskId).Include(x => x.Tags).FirstOrDefault();
 
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
-#pragma warning disable S2259 // Null pointers should not be dereferenced
             if (tagEntity == null)
             {
-#pragma warning disable CS8604 // Possible null reference argument.
                 tagEntity = new Entities.TagEntity()
                 {
                     Name = tag,
                     TodoTasks = new List<Entities.TodoTaskEntity>() { todoTaskEntity },
                 };
-#pragma warning restore CS8604 // Possible null reference argument.
             }
             else if (todoTaskEntity.Tags != null && todoTaskEntity.Tags.Any(x => x.Name == tag))
             {
@@ -47,8 +43,6 @@ namespace TodoListApp.Services.Database.Services
             {
                 tagEntity.TodoTasks.Add(todoTaskEntity);
             }
-#pragma warning restore S2259 // Null pointers should not be dereferenced
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
 
             this.TagRepository.Insert(tagEntity);
 

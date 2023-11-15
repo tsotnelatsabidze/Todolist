@@ -4,7 +4,7 @@ namespace TodoListApp.Services.Interfaces
 {
     public interface ITodoListService
     {
-        TodoList CreateTodoList(TodoList toDoList);
+        TodoList CreateTodoList(TodoList todoList);
 
         void DeleteTodoList(int id);
 
