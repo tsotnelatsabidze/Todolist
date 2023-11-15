@@ -71,14 +71,17 @@
                 @Html.LabelFor(model => model.Tags, htmlAttributes: new { @class = "control-label col-md-2" })
                 <div class="col-md-10">
                     <div id="tagList" class="d-flex flex-wrap">
-                        @foreach (var tag in Model.Tags)
+                        @if(Model.Tags != null)
                         {
-                            <div class="tag-item me-2 mb-2" data-tag="@tag.Name">
-                                <span class="tag-text">@tag.Name</span>
-                                <button type="button" class="btn btn-danger btn-sm removeTagBtn">
-                                    <span class="btn-icon">&times;</span>
-                                </button>
-                            </div>
+                            @foreach (var tag in Model.Tags)
+                            {
+                                <div class="tag-item me-2 mb-2" data-tag="@tag.Name">
+                                    <span class="tag-text">@tag.Name</span>
+                                    <button type="button" class="btn btn-danger btn-sm removeTagBtn">
+                                        <span class="btn-icon">&times;</span>
+                                    </button>
+                                </div>
+                            }
                         }
                     </div>
                     <button type="button" id="addTagBtn" class="btn btn-primary">Add Tag</button>
@@ -91,22 +94,25 @@
                 @Html.LabelFor(model => model.Comments, htmlAttributes: new { @class = "control-label col-md-2" })
                 <div class="col-md-10">
                     <ul id="commentList" class="list-group">
-                        @foreach (var comment in Model.Comments)
+                        @if(Model.Comments != null)
                         {
-                            <li class="list-group-item comment" data-comment="@comment.Id">
-                                <div class="comment-content">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <span class="comment-text">@comment.Text</span>
-                                        <button type="button" class="btn btn-danger btn-sm removeCommentBtn">
-                                            <span class="btn-icon">&times;</span>
-                                        </button>
+                            @foreach (var comment in Model.Comments)
+                            {
+                                <li class="list-group-item comment" data-comment="@comment.Id">
+                                    <div class="comment-content">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <span class="comment-text">@comment.Text</span>
+                                            <button type="button" class="btn btn-danger btn-sm removeCommentBtn">
+                                                <span class="btn-icon">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="comment-metadata">
+                                            <span class="comment-info">Created by: @comment.Creator</span>
+                                            <span class="comment-info">Date: @comment.CreateDate.ToString("yyyy-MM-dd HH:mm:ss")</span>
+                                        </div>
                                     </div>
-                                    <div class="comment-metadata">
-                                        <span class="comment-info">Created by: @comment.Creator</span>
-                                        <span class="comment-info">Date: @comment.CreateDate.ToString("yyyy-MM-dd HH:mm:ss")</span>
-                                    </div>
-                                </div>
-                            </li>
+                                </li>
+                            }
                         }
                     </ul>
                     <button type="button" id="addCommentBtn" class="btn btn-primary mt-2">Add Comment</button>

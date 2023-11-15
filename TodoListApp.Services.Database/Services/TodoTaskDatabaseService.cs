@@ -73,12 +73,7 @@ namespace TodoListApp.Services.Database.Services
 
         public TodoTask GetTodoTask(int todoTaskId)
         {
-            var todoTask = this.context.TodoTasks.FirstOrDefault(x => x.Id == todoTaskId);
-            if (todoTask == null)
-            {
-                throw new ArgumentNullException(nameof(todoTaskId), "TodoTask not found");
-            }
-
+            var todoTask = this.context.TodoTasks.FirstOrDefault(x => x.Id == todoTaskId) ?? throw new ArgumentNullException(nameof(todoTaskId), "TodoTask not found");
             return new TodoTask()
             {
                 Id = todoTask.Id,
@@ -113,11 +108,7 @@ namespace TodoListApp.Services.Database.Services
 
         public TodoTask UpdateTodoTask(int id, TodoTask todoTaskEntity)
         {
-            var todoTask = this.context.TodoTasks.Include(x => x.Tags).FirstOrDefault(x => x.Id == id);
-            if (todoTask == null)
-            {
-                throw new ArgumentNullException(nameof(id), "TodoTask not found");
-            }
+            var todoTask = this.context.TodoTasks.Include(x => x.Tags).FirstOrDefault(x => x.Id == id) ?? throw new ArgumentNullException(nameof(id), "TodoTask not found");
 
             todoTask.Title = todoTaskEntity.Title;
             todoTask.Description = todoTaskEntity.Description;
@@ -130,13 +121,10 @@ namespace TodoListApp.Services.Database.Services
                 todoTask.Tags = todoTaskEntity.Tags.Select(tag =>
                 {
                     var tagEntity = this.context.Tags.FirstOrDefault(x => x.Name == tag.Name);
-                    if (tagEntity == null)
+                    tagEntity ??= new TagEntity()
                     {
-                        tagEntity = new TagEntity()
-                        {
-                            Name = tag.Name,
-                        };
-                    }
+                        Name = tag.Name,
+                    };
 
                     return tagEntity;
                 }).ToList();
@@ -155,7 +143,7 @@ namespace TodoListApp.Services.Database.Services
                 CreateDate = todoTask.CreateDate,
                 DueDate = todoTask.DueDate,
                 TodoListId = todoTask.TodoListId,
-                Tags = todoTask.Tags != null ? todoTask.Tags.Select(x => new Tag() { Id = x.Id, Name = x.Name }) : null,
+                Tags = todoTask.Tags?.Select(x => new Tag() { Id = x.Id, Name = x.Name }),
             };
         }
     }

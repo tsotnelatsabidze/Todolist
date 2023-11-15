@@ -41,7 +41,7 @@
                         <td>
                             <a href="@Url.Action("TodoTasks", new { id = item.Id })" class="btn btn-link">
                                 <div>
-                                    View Todo Tasks (@item.TodoTasks.Count())
+                                    View Todo Tasks (@if (@item.TodoTasks != null) @item.TodoTasks.Count()))
                                 </div>
                             </a>
                         </td>

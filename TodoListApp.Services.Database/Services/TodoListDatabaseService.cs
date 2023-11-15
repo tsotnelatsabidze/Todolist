@@ -37,12 +37,7 @@ namespace TodoListApp.Services.Database.Services
 
         public void DeleteTodoList(int id)
         {
-            var todoList = this.dbContext.TodoLists.FirstOrDefault(x => x.Id == id);
-            if (todoList == null)
-            {
-                throw new ArgumentNullException(nameof(id), "TodoList not found");
-            }
-
+            var todoList = this.dbContext.TodoLists.FirstOrDefault(x => x.Id == id) ?? throw new ArgumentNullException(nameof(id), "TodoList not found");
             _ = this.dbContext.TodoLists.Remove(todoList);
             _ = this.dbContext.SaveChanges();
         }
@@ -69,26 +64,19 @@ namespace TodoListApp.Services.Database.Services
         public TodoList GetTodoListById(int todoListId)
         {
             var todoListEntity = this.dbContext.TodoLists.FirstOrDefault(x => x.Id == todoListId);
-            if (todoListEntity == null)
-            {
-                throw new ArgumentNullException(nameof(todoListId), "TodoList not found");
-            }
-
-            return new TodoList()
-            {
-                Id = todoListEntity.Id,
-                Name = todoListEntity.Name,
-                Description = todoListEntity.Description,
-            };
+            return todoListEntity == null
+                ? throw new ArgumentNullException(nameof(todoListId), "TodoList not found")
+                : new TodoList()
+                {
+                    Id = todoListEntity.Id,
+                    Name = todoListEntity.Name,
+                    Description = todoListEntity.Description,
+                };
         }
 
         public TodoList UpdateTodoList(int id, TodoList todoList)
         {
-            var todoListEntity = this.dbContext.TodoLists.FirstOrDefault(x => x.Id == id);
-            if (todoListEntity == null)
-            {
-                throw new ArgumentNullException(nameof(id), "TodoList not found");
-            }
+            var todoListEntity = this.dbContext.TodoLists.FirstOrDefault(x => x.Id == id) ?? throw new ArgumentNullException(nameof(id), "TodoList not found");
 
             todoListEntity.Name = todoList.Name;
             todoListEntity.Description = todoList.Description;
