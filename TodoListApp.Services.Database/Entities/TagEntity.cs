@@ -4,8 +4,8 @@ namespace TodoListApp.Services.Database.Entities
     {
         public int Id { get; set; }
 
-        public string? Name { get; set; }
+        public string Name { get; set; }
 
-        public ICollection<TodoTaskEntity>? TodoTasks { get; set; }
+        public ICollection<TodoTaskEntity> TodoTasks { get; set; }
     }
 }
