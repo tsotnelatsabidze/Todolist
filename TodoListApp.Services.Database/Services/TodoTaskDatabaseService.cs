@@ -74,7 +74,11 @@ namespace TodoListApp.Services.Database.Services
         public TodoTask GetTodoTask(int todoTaskId)
         {
             var todoTask = this.context.TodoTasks.FirstOrDefault(x => x.Id == todoTaskId);
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
+            if (todoTask == null)
+            {
+                throw new ArgumentNullException(nameof(todoTaskId), "TodoTask not found");
+            }
+
             return new TodoTask()
             {
                 Id = todoTask.Id,
@@ -87,7 +91,6 @@ namespace TodoListApp.Services.Database.Services
                 DueDate = todoTask.DueDate,
                 TodoListId = todoTask.TodoListId,
             };
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
         }
 
         public List<TodoTask> GetTodoTasksByTodoList(int todoListId)
@@ -108,53 +111,51 @@ namespace TodoListApp.Services.Database.Services
             }).ToList();
         }
 
-        public TodoTask UpdateTodoTask(int id, TodoTask todoTask)
+        public TodoTask UpdateTodoTask(int id, TodoTask todoTaskEntity)
         {
-            var todoTaskEntity = this.context.TodoTasks.Include(x => x.Tags).FirstOrDefault(x => x.Id == id);
-            if (todoTaskEntity == null)
+            var todoTask = this.context.TodoTasks.Include(x => x.Tags).FirstOrDefault(x => x.Id == id);
+            if (todoTask == null)
             {
                 throw new ArgumentNullException(nameof(id), "TodoTask not found");
             }
 
-            todoTaskEntity.Title = todoTask.Title;
-            todoTaskEntity.Description = todoTask.Description;
-            todoTaskEntity.Status = todoTask.Status;
-            todoTaskEntity.DueDate = todoTask.DueDate;
-            todoTaskEntity.AssignedUserId = todoTask.AssignedUserId;
+            todoTask.Title = todoTaskEntity.Title;
+            todoTask.Description = todoTaskEntity.Description;
+            todoTask.Status = todoTaskEntity.Status;
+            todoTask.DueDate = todoTaskEntity.DueDate;
+            todoTask.AssignedUserId = todoTaskEntity.AssignedUserId;
 
-            todoTaskEntity.Tags = new List<TagEntity>();
-#pragma warning disable S3267 // Loops should be simplified with "LINQ" expressions
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
-            foreach (var tag in todoTask.Tags)
+            if (todoTaskEntity.Tags != null)
             {
-                var tagEntity = this.context.Tags.FirstOrDefault(x => x.Name == tag.Name);
-                if (tagEntity == null)
+                todoTask.Tags = todoTaskEntity.Tags.Select(tag =>
                 {
-                    tagEntity = new TagEntity()
+                    var tagEntity = this.context.Tags.FirstOrDefault(x => x.Name == tag.Name);
+                    if (tagEntity == null)
                     {
-                        Name = tag.Name,
-                    };
-                }
+                        tagEntity = new TagEntity()
+                        {
+                            Name = tag.Name,
+                        };
+                    }
 
-                todoTaskEntity.Tags.Add(tagEntity);
+                    return tagEntity;
+                }).ToList();
             }
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
-#pragma warning restore S3267 // Loops should be simplified with "LINQ" expressions
 
             _ = this.context.SaveChanges();
 
             return new TodoTask()
             {
-                Id = todoTaskEntity.Id,
-                Title = todoTaskEntity.Title,
-                Description = todoTaskEntity.Description,
-                Status = todoTaskEntity.Status,
-                AssignedUserId = todoTaskEntity.AssignedUserId,
-                CreatorUserId = todoTaskEntity.CreatorUserId,
-                CreateDate = todoTaskEntity.CreateDate,
-                DueDate = todoTaskEntity.DueDate,
-                TodoListId = todoTaskEntity.TodoListId,
-                Tags = todoTaskEntity.Tags.Select(x => new Tag() { Id = x.Id, Name = x.Name }),
+                Id = todoTask.Id,
+                Title = todoTask.Title,
+                Description = todoTask.Description,
+                Status = todoTask.Status,
+                AssignedUserId = todoTask.AssignedUserId,
+                CreatorUserId = todoTask.CreatorUserId,
+                CreateDate = todoTask.CreateDate,
+                DueDate = todoTask.DueDate,
+                TodoListId = todoTask.TodoListId,
+                Tags = todoTask.Tags != null ? todoTask.Tags.Select(x => new Tag() { Id = x.Id, Name = x.Name }) : null,
             };
         }
     }

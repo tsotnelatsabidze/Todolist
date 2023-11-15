@@ -41,7 +41,14 @@ namespace TodoListApp.Services.WebApi
         {
             var response = await this.Client.GetAsync($"/TodoTask?$filter=Id eq {taskId}&$expand=Tags,Comments");
             string content = await response.Content.ReadAsStringAsync();
-            return JsonConvert.DeserializeObject<IEnumerable<TodoTaskDto>>(content).FirstOrDefault();
+            var todoTask = JsonConvert.DeserializeObject<IEnumerable<TodoTaskDto>>(content).FirstOrDefault();
+
+            if (todoTask == null)
+            {
+                throw new KeyNotFoundException($"TodoTask with id {taskId} not found");
+            }
+
+            return todoTask;
         }
 
         public List<TodoTaskDto> GetTodoTasks()

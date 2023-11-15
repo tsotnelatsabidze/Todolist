@@ -27,6 +27,11 @@ namespace TodoListApp.Services.Database.Services
             var tagEntity = this.TagRepository.GetAll().Where(x => x.Name == tag).Include(x => x.TodoTasks).FirstOrDefault();
             var todoTaskEntity = this.TodoTaskReposiotry.GetAll().Where(x => x.Id == todoTaskId).Include(x => x.Tags).FirstOrDefault();
 
+            if (todoTaskEntity == null)
+            {
+                throw new ArgumentNullException(nameof(todoTaskId), "TodoTask not found");
+            }
+
             if (tagEntity == null)
             {
                 tagEntity = new Entities.TagEntity()
@@ -34,6 +39,7 @@ namespace TodoListApp.Services.Database.Services
                     Name = tag,
                     TodoTasks = new List<Entities.TodoTaskEntity>() { todoTaskEntity },
                 };
+                this.TagRepository.Insert(tagEntity);
             }
             else if (todoTaskEntity.Tags != null && todoTaskEntity.Tags.Any(x => x.Name == tag))
             {
@@ -41,10 +47,14 @@ namespace TodoListApp.Services.Database.Services
             }
             else
             {
-                tagEntity.TodoTasks.Add(todoTaskEntity);
-            }
+                if (tagEntity.TodoTasks == null)
+                {
+                    tagEntity.TodoTasks = new List<Entities.TodoTaskEntity>();
+                }
 
-            this.TagRepository.Insert(tagEntity);
+                tagEntity.TodoTasks.Add(todoTaskEntity);
+                this.TagRepository.Update(tagEntity);
+            }
 
             return this.Mapper.Map<Tag>(tagEntity);
         }
